@@ -7,6 +7,6 @@ phases:
     commands:
       # trigger the unit tests here
       - echo 'Running unit tests'
-      - cd HelloWorldFunction
+      - cd hello-world
       - npm install
       - npm run test      
