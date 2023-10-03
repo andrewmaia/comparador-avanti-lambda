@@ -1,4 +1,6 @@
-AWSTemplateFormatVersion : '2010-09-09'
+# @format
+
+AWSTemplateFormatVersion: "2010-09-09"
 Description: >
   This template deploys a CodePipeline with its required resources.
 
@@ -12,7 +14,6 @@ Description: >
 
   **WARNING** You will be billed for the AWS resources used if you create a stack from this template.
 
-
 # To deploy this template and connect to the main git branch, run this against the leading account:
 # `sam deploy -t codepipeline.yaml --stack-name <stack-name> --capabilities=CAPABILITY_IAM`.
 # After creating the stack, the CodeStar Connection is in PENDING status by default. You must complete
@@ -24,7 +25,6 @@ Description: >
 # sam deploy -t codepipeline.yaml --stack-name <stack-name> --capabilities=CAPABILITY_IAM \
 #   --parameter-overrides="FeatureGitBranch=<branch-name> CodeStarConnectionArn=<codestar-connection-arn>"
 # ```
-
 
 Parameters:
   GitProviderType:
@@ -131,9 +131,19 @@ Resources:
                 Provider: CodeStarSourceConnection
                 Version: "1"
               Configuration:
-                ConnectionArn: !If [CreateConnection, !Ref CodeStarConnection, !Ref CodeStarConnectionArn]
+                ConnectionArn:
+                  !If [
+                    CreateConnection,
+                    !Ref CodeStarConnection,
+                    !Ref CodeStarConnectionArn,
+                  ]
                 FullRepositoryId: !Ref FullRepositoryId
-                BranchName: !If [IsFeatureBranchPipeline, !Ref FeatureGitBranch, !Ref MainGitBranch]
+                BranchName:
+                  !If [
+                    IsFeatureBranchPipeline,
+                    !Ref FeatureGitBranch,
+                    !Ref MainGitBranch,
+                  ]
               OutputArtifacts:
                 - Name: SourceCodeAsZip
               RunOrder: 1
@@ -176,18 +186,18 @@ Resources:
               RunOrder: 2
 
         # Uncomment and modify the following step for running the unit-tests
-        # - Name: UnitTest
-        #   Actions:
-        #     - Name: UnitTest
-        #       ActionTypeId:
-        #         Category: Build
-        #         Owner: AWS
-        #         Provider: CodeBuild
-        #         Version: "1"
-        #       Configuration:
-        #         ProjectName: !Ref CodeBuildProjectUnitTest
-        #       InputArtifacts:
-        #         - Name: SourceCodeAsZip
+        - Name: UnitTest
+          Actions:
+            - Name: UnitTest
+              ActionTypeId:
+                Category: Build
+                Owner: AWS
+                Provider: CodeBuild
+                Version: "1"
+              Configuration:
+                ProjectName: !Ref CodeBuildProjectUnitTest
+              InputArtifacts:
+                - Name: SourceCodeAsZip
 
         - !If
           - IsFeatureBranchPipeline
@@ -305,8 +315,7 @@ Resources:
       VersioningConfiguration:
         Status: Enabled
       LoggingConfiguration:
-        DestinationBucketName:
-          !Ref PipelineArtifactsLoggingBucket
+        DestinationBucketName: !Ref PipelineArtifactsLoggingBucket
         LogFilePrefix: "artifacts-logs"
       BucketEncryption:
         ServerSideEncryptionConfiguration:
@@ -323,7 +332,7 @@ Resources:
             Action: "s3:*"
             Principal: "*"
             Resource:
-              - !Sub  "${PipelineArtifactsBucket.Arn}/*"
+              - !Sub "${PipelineArtifactsBucket.Arn}/*"
               - !GetAtt PipelineArtifactsBucket.Arn
             Condition:
               Bool:
@@ -346,7 +355,7 @@ Resources:
       AccessControl: "LogDeliveryWrite"
       OwnershipControls:
         Rules:
-          - ObjectOwnership:  ObjectWriter
+          - ObjectOwnership: ObjectWriter
       VersioningConfiguration:
         Status: Enabled
       BucketEncryption:
@@ -398,7 +407,12 @@ Resources:
               - Effect: Allow
                 Action:
                   - "codestar-connections:UseConnection"
-                Resource: !If [CreateConnection, !Ref CodeStarConnection, !Ref CodeStarConnectionArn]
+                Resource:
+                  !If [
+                    CreateConnection,
+                    !Ref CodeStarConnection,
+                    !Ref CodeStarConnectionArn,
+                  ]
         - PolicyName: CodePipelineCodeAndS3Bucket
           PolicyDocument:
             Version: "2012-10-17"
@@ -429,7 +443,7 @@ Resources:
                   - "codebuild:BatchGetBuilds"
                 Resource:
                   # Uncomment the line below to enable the unit-tests
-                  # - !GetAtt CodeBuildProjectUnitTest.Arn
+                  - !GetAtt CodeBuildProjectUnitTest.Arn
                   - !If
                     - IsFeatureBranchPipeline
                     - !GetAtt CodeBuildProjectBuildAndDeployFeature.Arn
@@ -480,8 +494,8 @@ Resources:
             Version: 2012-10-17
             Statement:
               - Effect: Allow
-                Action: '*'
-                Resource: '*'
+                Action: "*"
+                Resource: "*"
 
   #   ____          _      ____        _ _     _
   #  / ___|___   __| | ___| __ ) _   _(_| | __| |
@@ -539,19 +553,19 @@ Resources:
                     aws:ResourceTag/Role: pipeline-execution-role
 
   # Uncomment and modify the following step for running the unit-tests
-  # CodeBuildProjectUnitTest:
-  #   Type: AWS::CodeBuild::Project
-  #   Properties:
-  #     Artifacts:
-  #       Type: CODEPIPELINE
-  #     Environment:
-  #       Type: LINUX_CONTAINER
-  #       ComputeType: BUILD_GENERAL1_SMALL
-  #       Image: aws/codebuild/amazonlinux2-x86_64-standard:3.0
-  #     ServiceRole: !GetAtt CodeBuildServiceRole.Arn
-  #     Source:
-  #       Type: CODEPIPELINE
-  #       BuildSpec: pipeline/buildspec_unit_test.yml
+  CodeBuildProjectUnitTest:
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        Type: LINUX_CONTAINER
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/amazonlinux2-x86_64-standard:3.0
+      ServiceRole: !GetAtt CodeBuildServiceRole.Arn
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: pipeline/buildspec_unit_test.yml
 
   CodeBuildProjectBuildAndDeployFeature:
     Condition: IsFeatureBranchPipeline
