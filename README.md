@@ -73,11 +73,11 @@ Depois de criada a stack da pipeline, qualquer alteração no código  feitas no
 
 ## Como funciona a pipeline criada
 
-O código como infra gerado em codepipeline.yaml gerá uma pipeline com os seguintes estágios:
+O código como infra gerado em codepipeline.yaml ira gerar uma pipeline com os seguintes estágios:
 
-Estágio 1 - Detecção de alterações no Repositório: Qualquer commit feito no repositório irá iniciar a pipeline automaticamente.
+*Estágio 1 - Detecção de alterações no Repositório:* Qualquer commit feito no repositório irá iniciar a pipeline automaticamente.
 
-Estágio 2 - 
+*Estágio 2 - Atualização da Pipeline:* É neste estágio que ocorra a *auto-atualização da pipeline*. Aqui são executadas ações que irão pegar o conteudo do arquivo *codepipeline.yaml*  e republicar a stack que gera a pipeline. Assim qualquer alteração nesse arquivo resultará numa auto-atualização da pipeline.
 
 
 
