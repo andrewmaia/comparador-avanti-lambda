@@ -63,7 +63,7 @@ Depois é necessário comitar esses arquivos no repositório.
 
 Obs: Novamente repare que esses arquivos já estão presentes no repositório porque o comando sam pipeline init já foi rodado para este projeto.  
 
-Depois rode o comando a baixo para criar a stack da pipeline:
+Depois rode o comando abaixo para criar a stack da pipeline:
 
 ```bash
 sam deploy -t codepipeline.yaml --stack-name comparador-avanti-lambda-pipeline --capabilities=CAPABILITY_IAM
