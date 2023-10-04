@@ -49,7 +49,7 @@ sam delete
 
 ## Deploy automático de infra e código através de Pipeline
 
-SAM Cli permite criar uma pipeline que automatiza todo o processo de deploy para que não seja necessário rodar os comandos sam buil e sam deploy manualmente. Rode o comando: 
+SAM Cli permite criar uma pipeline que automatiza todo o processo de deploy para que não seja necessário rodar os comandos sam build e sam deploy manualmente. Rode o comando: 
 
 ```bash
 sam pipeline init --bootstrap 
