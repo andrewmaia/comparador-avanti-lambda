@@ -9,7 +9,7 @@ Description: >
   - UpdatePipeline
   - BuildAndDeployFeatureStack (FeatureGitBranch only)
   - BuildAndPackage (MainGitBranch only)
-  - DeployTest (MainGitBranch only)
+  - DeployDev (MainGitBranch only)
   - DeployProd (MainGitBranch only)
 
   **WARNING** You will be billed for the AWS resources used if you create a stack from this template.
@@ -147,7 +147,7 @@ Resources:
               OutputArtifacts:
                 - Name: SourceCodeAsZip
               RunOrder: 1
-        - Name: UpdatePipeline
+        - Name: AtualizarPipeline
           Actions:
             - Name: CreateChangeSet
               ActionTypeId:
@@ -186,7 +186,7 @@ Resources:
               RunOrder: 2
 
         # Uncomment and modify the following step for running the unit-tests
-        - Name: UnitTest
+        - Name: RodarUnitTest
           Actions:
             - Name: UnitTest
               ActionTypeId:
@@ -217,7 +217,7 @@ Resources:
 
         - !If
           - IsMainBranchPipeline
-          - Name: BuildAndPackage
+          - Name: GerarPacotesPublicacao
             Actions:
               - Name: CodeBuild
                 ActionTypeId:
@@ -235,9 +235,9 @@ Resources:
 
         - !If
           - IsMainBranchPipeline
-          - Name: DeployTest
+          - Name: PublicarEmDev
             Actions:
-              - Name: DeployTest
+              - Name: DeployDev
                 ActionTypeId:
                   Category: Build
                   Owner: AWS
@@ -274,7 +274,7 @@ Resources:
 
         - !If
           - IsMainBranchPipeline
-          - Name: DeployProd
+          - Name: PublicarEmProd
             Actions:
               # uncomment this to have a manual approval step before deployment to production
               # - Name: ManualApproval
