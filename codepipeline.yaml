@@ -7,10 +7,8 @@ Description: >
   The following stages are predefined in this template:
   - Source
   - UpdatePipeline
-  - BuildAndDeployFeatureStack (FeatureGitBranch only)
-  - BuildAndPackage (MainGitBranch only)
-  - DeployTest (MainGitBranch only)
-  - DeployProd (MainGitBranch only)
+  - BuildAndPackage 
+  - DeployProd 
 
   **WARNING** You will be billed for the AWS resources used if you create a stack from this template.
 
@@ -20,11 +18,6 @@ Description: >
 # the OAuth handshake with the third-party provider using the installation associated with your connection.
 # See https://docs.aws.amazon.com/dtconsole/latest/userguide/connections-update.html for instructions.
 
-# If later you need to deploy a new CodePipeline to connect to a non-main git branch, run
-# ```
-# sam deploy -t codepipeline.yaml --stack-name <stack-name> --capabilities=CAPABILITY_IAM \
-#   --parameter-overrides="FeatureGitBranch=<branch-name> CodeStarConnectionArn=<codestar-connection-arn>"
-# ```
 
 Parameters:
   GitProviderType:
@@ -632,22 +625,6 @@ Resources:
       Source:
         Type: CODEPIPELINE
         BuildSpec: pipeline/buildspec_build_package.yml
-
-  # Uncomment and modify the following step for running the integration tests
-  # CodeBuildProjectIntegrationTest:
-  #   Condition: IsMainBranchPipeline
-  #   Type: AWS::CodeBuild::Project
-  #   Properties:
-  #     Artifacts:
-  #       Type: CODEPIPELINE
-  #     Environment:
-  #       Type: LINUX_CONTAINER
-  #       ComputeType: BUILD_GENERAL1_SMALL
-  #       Image: aws/codebuild/amazonlinux2-x86_64-standard:3.0
-  #     ServiceRole: !GetAtt CodeBuildServiceRole.Arn
-  #     Source:
-  #       Type: CODEPIPELINE
-  #       BuildSpec: pipeline/buildspec_integration_test.yml
 
   CodeBuildProjectDeploy:
     Condition: IsMainBranchPipeline
