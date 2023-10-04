@@ -69,7 +69,7 @@ Depois rode o comando abaixo para criar a stack da pipeline:
 sam deploy -t codepipeline.yaml --stack-name comparador-avanti-lambda-pipeline --capabilities=CAPABILITY_IAM
 ```
 
-Depois de criada a stack da pipeline, qualquer alteração nos código  feitas no repositório das funções lambda e no código de infra do pipeline serão automáticamente atualizados na AWS. Isso mesmo a pipeline é capaz de se auto-atualizar.
+Depois de criada a stack da pipeline, qualquer alteração no código  feitas no repositório das funções lambda e no código de infra do pipeline serão automáticamente atualizadas na AWS. Isso mesmo: A pipeline é capaz de se auto-atualizar.
 
 
 
