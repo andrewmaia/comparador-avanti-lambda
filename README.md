@@ -79,9 +79,15 @@ O código como infra gerado em codepipeline.yaml ira gerar uma pipeline com os s
 
 **Estágio 2 - Atualização da Pipeline:** É neste estágio que ocorre a **auto-atualização da pipeline**. Aqui são executadas ações que irão pegar o conteudo do arquivo **codepipeline.yaml**  e republicar a stack que gera a pipeline. Assim qualquer alteração nesse arquivo resultará numa auto-atualização da pipeline.
 
-**Estágio 4 - Rodar Unit Tests:** Neste estágio é executado o projeto de codebuild que roda os testes através do arquivo **buildspec_unit_test.yml** da pasta pipeline.
+**Estágio 3 - Rodar Unit Tests:** Neste estágio é executado o projeto de codebuild que roda os testes através do arquivo **buildspec_unit_test.yml** da pasta pipeline.
 
-**Estágio 5 - Gerar pacotes de publicação:** Neste estágio é executado o projeto de codebuild que gera os pacotes com a stacks das funções lambda a serem publicadas  através do arquivo **buildspec_build_package.yml** da pasta pipeline.
+**Estágio 4 - Gerar pacotes de publicação:** Neste estágio é executado o projeto de codebuild que gera os pacotes com a stacks das funções lambda a serem publicadas  através do arquivo **buildspec_build_package.yml** da pasta pipeline.
 
-**Estágio 6 - Publicar em Prod:** Neste estágio é executado o projeto de codebuild que publica as stacks funções lambda através do arquivo **buildspec_deploy.yml** da pasta pipeline.
+**Estágio 5 - Publicar em Dev:** Neste estágio é executado o projeto de codebuild que publica na stack de dev as funções lambda através do arquivo **buildspec_deploy.yml** da pasta pipeline.
+
+**Estágio 6 - Publicar em Prod:** Neste estágio é executado o projeto de codebuild que publica na stack de prod as funções lambda através do arquivo **buildspec_deploy.yml** da pasta pipeline.
+
+Obs: Os estágios 5 e 6 utilizam o mesmo projeto de codebuild para publicar as stacks de dev e prod. O projeto consegue publicar em stacks diferentes porque utiliza variáveis de ambiente para cada estágio.
+
+Obs2: No arquivo codepipeline.yaml é definido mais alguns projetos de build que não são publicados na pipeline porque estão comentados (no caso do integration test) ou porque há algumas condições no código que só permitem criar o projeto quando determinadas variáveis estão setadas ( no caso do BuildAndDeployFeatureStack).
 
