@@ -71,6 +71,16 @@ sam deploy -t codepipeline.yaml --stack-name comparador-avanti-lambda-pipeline -
 
 Depois de criada a stack da pipeline, qualquer alteração no código  feitas no repositório das funções lambda e no código de infra do pipeline serão automáticamente atualizadas na AWS. Isso mesmo: A pipeline é capaz de se auto-atualizar.
 
+## Como funciona a pipeline criada
+
+O código como infra gerado em codepipeline.yaml gerá uma pipeline com os seguintes estágios:
+
+Estágio 1 - Detecção de alterações no Repositório: Qualquer commit feito no repositório irá iniciar a pipeline automaticamente.
+
+Estágio 2 - 
+
+
+
 
 
 
