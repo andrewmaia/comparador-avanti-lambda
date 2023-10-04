@@ -61,7 +61,7 @@ Também é criado uma pasta chamada pipeline onde está os arquivos com os coman
 
 Depois é necessário comitar esses arquivos no repositório.
 
-Obs: Novamente repare que esses arquivos já estão presentes no repositório porque o comando sam pipeline init já foi rodado.  
+Obs: Novamente repare que esses arquivos já estão presentes no repositório porque o comando sam pipeline init já foi rodado para este projeto.  
 
 Depois rode o comando a baixo para criar a stack da pipeline:
 
