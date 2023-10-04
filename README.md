@@ -1,7 +1,7 @@
 ## Infra como código para as funções Lambda
 
 Este projeto contém funções AWS Lambda.
-Para o deploy automatizado das funções Lambda foi utilizado o AWS SAM Cli. Para utilizar o SAM Cli é necessário:
+Para o deploy da funções Lambda através de código (Infra como código) foi utilizado o AWS SAM Cli. Para utilizar o SAM Cli é necessário:
 
 * SAM CLI - [Install the SAM CLI](https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/serverless-sam-cli-install.html)
 * Node.js - [Install Node.js 18](https://nodejs.org/en/), including the NPM package management tool.
