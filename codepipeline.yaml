@@ -122,7 +122,7 @@ Resources:
       RoleArn: !GetAtt CodePipelineExecutionRole.Arn
       RestartExecutionOnUpdate: true
       Stages:
-        - Name: Source
+        - Name: Deteccao de alteracoes no Repositorio
           Actions:
             - Name: SourceCodeRepo
               ActionTypeId:
