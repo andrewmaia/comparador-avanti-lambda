@@ -7,6 +7,7 @@ Description: >
   The following stages are predefined in this template:
   - Source
   - UpdatePipeline
+  - BuildAndDeployFeatureStack (FeatureGitBranch only)
   - BuildAndPackage (MainGitBranch only)
   - DeployTest (MainGitBranch only)
   - DeployProd (MainGitBranch only)
@@ -19,6 +20,11 @@ Description: >
 # the OAuth handshake with the third-party provider using the installation associated with your connection.
 # See https://docs.aws.amazon.com/dtconsole/latest/userguide/connections-update.html for instructions.
 
+# If later you need to deploy a new CodePipeline to connect to a non-main git branch, run
+# ```
+# sam deploy -t codepipeline.yaml --stack-name <stack-name> --capabilities=CAPABILITY_IAM \
+#   --parameter-overrides="FeatureGitBranch=<branch-name> CodeStarConnectionArn=<codestar-connection-arn>"
+# ```
 
 Parameters:
   GitProviderType:
@@ -561,6 +567,37 @@ Resources:
         Type: CODEPIPELINE
         BuildSpec: pipeline/buildspec_unit_test.yml
 
+  CodeBuildProjectBuildAndDeployFeature:
+    Condition: IsFeatureBranchPipeline
+    Type: AWS::CodeBuild::Project
+    Properties:
+      Artifacts:
+        Type: CODEPIPELINE
+      Environment:
+        Type: LINUX_CONTAINER
+        ComputeType: BUILD_GENERAL1_SMALL
+        Image: aws/codebuild/amazonlinux2-x86_64-standard:3.0
+        PrivilegedMode: true
+        EnvironmentVariables:
+          - Name: SAM_TEMPLATE
+            Value: !Ref SamTemplate
+          - Name: TESTING_REGION
+            Value: !Ref TestingRegion
+          - Name: TESTING_PIPELINE_EXECUTION_ROLE
+            Value: !Ref TestingPipelineExecutionRole
+          - Name: TESTING_CLOUDFORMATION_EXECUTION_ROLE
+            Value: !Ref TestingCloudFormationExecutionRole
+          - Name: TESTING_ARTIFACT_BUCKET
+            Value: !Ref TestingArtifactBucket
+          - Name: TESTING_IMAGE_REPOSITORY
+            Value: !Ref TestingImageRepository
+          - Name: FEATURE_BRANCH_NAME
+            Value: !Ref FeatureGitBranch
+      ServiceRole: !GetAtt CodeBuildServiceRole.Arn
+      Source:
+        Type: CODEPIPELINE
+        BuildSpec: pipeline/buildspec_feature.yml
+
   CodeBuildProjectBuildAndPackage:
     Condition: IsMainBranchPipeline
     Type: AWS::CodeBuild::Project
@@ -595,6 +632,22 @@ Resources:
       Source:
         Type: CODEPIPELINE
         BuildSpec: pipeline/buildspec_build_package.yml
+
+  # Uncomment and modify the following step for running the integration tests
+  # CodeBuildProjectIntegrationTest:
+  #   Condition: IsMainBranchPipeline
+  #   Type: AWS::CodeBuild::Project
+  #   Properties:
+  #     Artifacts:
+  #       Type: CODEPIPELINE
+  #     Environment:
+  #       Type: LINUX_CONTAINER
+  #       ComputeType: BUILD_GENERAL1_SMALL
+  #       Image: aws/codebuild/amazonlinux2-x86_64-standard:3.0
+  #     ServiceRole: !GetAtt CodeBuildServiceRole.Arn
+  #     Source:
+  #       Type: CODEPIPELINE
+  #       BuildSpec: pipeline/buildspec_integration_test.yml
 
   CodeBuildProjectDeploy:
     Condition: IsMainBranchPipeline
