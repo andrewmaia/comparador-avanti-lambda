@@ -57,7 +57,7 @@ sam pipeline init --bootstrap
 
 O comando acima irá iniciar um passo a passo para gerar um arquivo de infra como código para gerar uma pipeline na AWS. Ao final do processo é criado o arquivo de infra como código chamado **codepipeline.yaml**.
 
-Também é criado uma pasta chamada pipeline onde está os arquivos com os comandos que os projetos do codebuild da pipeline irã rodar.
+Também é criado uma pasta chamada pipeline onde está os arquivos com os comandos que os projetos do codebuild da pipeline irão rodar.
 
 Depois é necessário comitar esses arquivos no repositório.
 
