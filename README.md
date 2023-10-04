@@ -9,7 +9,7 @@ Para o deploy da funções Lambda através de código (Infra como código) foi u
 
 
 O SAM Cli gera a infraestrura como código no arquivo template.yaml.
-O arquivo template.yaml é gerado através do  comando:
+O arquivo template.yaml é gerado através do  comando na raíz do repositório:
 
 ```bash
 sam init 
