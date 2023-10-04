@@ -79,9 +79,9 @@ O código como infra gerado em codepipeline.yaml ira gerar uma pipeline com os s
 
 **Estágio 2 - Atualização da Pipeline:** É neste estágio que ocorre a **auto-atualização da pipeline**. Aqui são executadas ações que irão pegar o conteudo do arquivo **codepipeline.yaml**  e republicar a stack que gera a pipeline. Assim qualquer alteração nesse arquivo resultará numa auto-atualização da pipeline.
 
-**Estágio 4 - Rodar Unit Tests:** Neste estágio é executado o projeto de codebuild que roda os testes através do arquivo **buildspec_unit_test.yml** da pasta pipeline
+**Estágio 4 - Rodar Unit Tests:** Neste estágio é executado o projeto de codebuild que roda os testes através do arquivo **buildspec_unit_test.yml** da pasta pipeline.
 
-**Estágio 5 - Gerar pacotes de publicação:** Neste estágio é executado o projeto de codebuild que gera os pacotes com a stacks das funções lambda a serem publicadas  através do arquivo **buildspec_build_package.yml** da pasta pipeline
+**Estágio 5 - Gerar pacotes de publicação:** Neste estágio é executado o projeto de codebuild que gera os pacotes com a stacks das funções lambda a serem publicadas  através do arquivo **buildspec_build_package.yml** da pasta pipeline.
 
-
+**Estágio 6 - Publicar em Prod:** Neste estágio é executado o projeto de codebuild que publica as stacks funções lambda através do arquivo **buildspec_deploy.yml** da pasta pipeline.
 
