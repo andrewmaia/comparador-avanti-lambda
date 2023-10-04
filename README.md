@@ -46,3 +46,29 @@ Depois de feito o deploy e criada a stack de recursos das funções lambda é po
 ```bash
 sam delete
 ```
+
+## Deploy automático de infra e código através de Pipeline
+
+SAM Cli permite criar uma pipeline que automatiza todo o processo de deploy para que não seja necessário rodar os comandos sam buil e sam deploy manualmente. Rode o comando: 
+
+```bash
+sam pipeline init --bootstrap 
+```
+
+O comando acima irá iniciar um passo a passo para gerar um arquivo de infra como código para gerar uma pipeline na AWS. Ao final do processo é criado o arquivo de infra como código chamado **codepipeline.yaml**.
+
+Também é criado uma pasta chamada pipeline onde está os arquivos com os comandos que os projetos do codebuild da pipeline irã rodar.
+
+Depois é necessário comitar esses arquivos no repositório.
+
+Obs: Novamente repare que esses arquivos já estão presentes no repositório porque o comando sam pipeline init já foi rodado.  
+
+Depois rode o comando a baixo para criar a stack da pipeline:
+
+```bash
+sam deploy -t codepipeline.yaml --stack-name comparador-avanti-lambda-pipeline --capabilities=CAPABILITY_IAM
+```
+
+
+
+
