@@ -26,11 +26,11 @@ Para  fazer o deploy das funções lambda em um conta AWS é necessário que as 
 aws configure
 ```
 
-Depois rodar o build para gerar os arquivos que serão utilizados pelo SAM para criar a stack de recursos das funções lambda no cloudformation:
+Depois rodar o build para gerar os arquivos que serão utilizados pelo SAM para criar a stack de recursos das funções lambda(Será criada uma pasta oculta chamada .aws-sam com os arquivos).:
 ```bash
 sam build 
 ```
-Será criada uma pasta oculta chamada .aws-sam com os arquivos
+
 
 A seguir é rodado o comando que irá criar a pilha de recursos no Cloudformation:
 ```bash
