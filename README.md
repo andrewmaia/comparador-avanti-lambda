@@ -39,6 +39,14 @@ sam deploy --guided
 
 Obs: o atributo --guided habilita o passo a passo e salva o que você selecionar em samconfig.toml, depois de salva as configurações não é mais necessário rodar o comando sam deploy com o atributo --guided
 
+## Exclusão das funções Lambda  em uma conta AWS
+
+Depois de feito o deploy e criada a stack de recursos das funções lambda é possível excluir essa stack através do comando:
+
+```bash
+sam delete
+```
+
 ## Use the SAM CLI to build and test locally
 
 Build your application with the `sam build` command.
