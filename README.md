@@ -19,7 +19,7 @@ Obs: Este comando já foi executado para este projeto, por isso o arquivo templa
 
 ## Deploy das funções Lambda de forma manual em uma conta AWS
 
-O Sam Cli permite fazer o deploy da infra como código das funções lambda do arquivo template.yaml.
+O SAM Cli permite fazer o deploy da infra como código das funções lambda do arquivo template.yaml.
 Para  fazer o deploy das funções lambda em um conta AWS é necessário que as credenciais aws já estejam configuradas através do comando:
 
 ```bash
