@@ -1,7 +1,16 @@
 # Infra como código para as funções Lambda
 
 Este projeto contém funções AWS Lambda.
-Para o deploy automatizado das funções Lambda foi utilizado o AWS Sam Cli que gera a infraestrura como código no arquivo template.yaml. O arquivo template.yaml é gerado através do  comando sam init (já foi executado para este projeto)
+Para o deploy automatizado das funções Lambda foi utilizado o AWS Sam Cli que gera a infraestrura como código no arquivo template.yaml.
+O arquivo template.yaml é gerado através do  comando:
+
+```bash
+sam init 
+```
+
+Obs: Este comando já foi executado para este projeto, por isso o arquivo template.yaml já está no repositório.
+
+
 
 
 ## Deploy the sample application
