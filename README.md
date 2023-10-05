@@ -1,3 +1,11 @@
+## Intruções para fazer o deploy deste projeto em uma conta AWS
+
+Todo o passo a passo abaixo já foi realizado. Para fazer deploy deste projeto basta configurar as credencias do AWS através do aws configure e apenas rodar o comando: 
+
+```bash
+sam deploy -t codepipeline.yaml --stack-name comparador-avanti-lambda-pipeline --capabilities=CAPABILITY_IAM
+```
+
 ## Infra como código para as funções Lambda
 
 Este projeto contém funções AWS Lambda.
