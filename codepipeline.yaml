@@ -26,48 +26,7 @@ Description: >
 #   --parameter-overrides="FeatureGitBranch=<branch-name> CodeStarConnectionArn=<codestar-connection-arn>"
 # ```
 
-#aws-sam-cli-managed-dev-pipeline-resources Parameters
 Parameters:
-  PipelineUserArn:
-    Type: String
-    Default: ""    
-  PipelineExecutionRoleArn:
-    Type: String
-    Default: ""    
-  CloudFormationExecutionRoleArn:
-    Type: String
-    Default: ""    
-  ArtifactsBucketArn:
-    Type: String
-    Default: ""    
-  CreateImageRepository:
-    Type: String
-    Default: false
-    AllowedValues: [true, false]
-  ImageRepositoryArn:
-    Type: String
-    Default: ""    
-  IdentityProviderThumbprint:
-    Type: String
-    Default: ""    
-  OidcClientId:
-    Type: String
-    Default: ""    
-  OidcProviderUrl:
-    Type: String
-    Default: ""
-  UseOidcProvider:
-    Type: String
-    Default: false
-    AllowedValues: [true, false]
-  SubjectClaim:
-    Type: String
-    Default: ""    
-  CreateNewOidcProvider:
-    Type: String
-    Default: false    
-    AllowedValues: [true, false]
-#aws-sam-cli-managed-dev-pipeline-resources Parameters
   GitProviderType:
     Type: String
     Default: "GitHub"
@@ -134,7 +93,6 @@ Conditions:
   IsMainBranchPipeline: !Equals [!Ref FeatureGitBranch, ""]
   IsFeatureBranchPipeline: !Not [Condition: IsMainBranchPipeline]
   CreateConnection: !Equals [!Ref CodeStarConnectionArn, ""]
-  MissingCloudFormationExecutionRole: !Equals [!Ref CloudFormationExecutionRoleArn, ""]
 
 Resources:
 #aws-sam-cli-managed-dev-pipeline-resources
@@ -310,10 +268,7 @@ Resources:
           - Effect: Allow
             Action: 'iam:PassRole'
             Resource:
-              Fn::If:
-                - MissingCloudFormationExecutionRole
-                - !GetAtt CloudFormationExecutionRole.Arn
-                - !Ref CloudFormationExecutionRoleArn
+              !GetAtt CloudFormationExecutionRole.Arn
           - Effect: Allow
             Action:
               - "cloudformation:CreateChangeSet"
