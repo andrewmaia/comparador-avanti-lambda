@@ -30,31 +30,42 @@ Description: >
 Parameters:
   PipelineUserArn:
     Type: String
+    Default: ""    
   PipelineExecutionRoleArn:
     Type: String
+    Default: ""    
   CloudFormationExecutionRoleArn:
     Type: String
+    Default: ""    
   ArtifactsBucketArn:
     Type: String
+    Default: ""    
   CreateImageRepository:
     Type: String
     Default: false
     AllowedValues: [true, false]
   ImageRepositoryArn:
     Type: String
+    Default: ""    
   IdentityProviderThumbprint:
     Type: String
+    Default: ""    
   OidcClientId:
     Type: String
+    Default: ""    
   OidcProviderUrl:
     Type: String
+    Default: ""
   UseOidcProvider:
     Type: String
+    Default: false
     AllowedValues: [true, false]
   SubjectClaim:
     Type: String
+    Default: ""    
   CreateNewOidcProvider:
     Type: String
+    Default: false    
     AllowedValues: [true, false]
 #aws-sam-cli-managed-dev-pipeline-resources Parameters
   GitProviderType:
@@ -134,16 +145,6 @@ Conditions:
 
 Resources:
 #aws-sam-cli-managed-dev-pipeline-resources
-  OidcProvider:
-    Type: AWS::IAM::OIDCProvider
-    Condition: MissingOidcProvider
-    Properties: 
-      ClientIdList: 
-        - !Ref OidcClientId
-      ThumbprintList: 
-        - !Ref IdentityProviderThumbprint
-      Url: !Ref OidcProviderUrl
-
   PipelineUser:
     Type: AWS::IAM::User
     Condition: MissingPipelineUser
