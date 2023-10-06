@@ -141,13 +141,11 @@ Conditions:
   MissingCloudFormationExecutionRole: !Equals [!Ref CloudFormationExecutionRoleArn, ""]
   MissingArtifactsBucket: !Equals [!Ref ArtifactsBucketArn, ""]
   ShouldHaveImageRepository: !Or [!Equals [!Ref CreateImageRepository, "true"], !Not [!Equals [!Ref ImageRepositoryArn, ""]]]
-  MissingImageRepository: !And [!Condition ShouldHaveImageRepository, !Equals [!Ref ImageRepositoryArn, ""]]  
 
 Resources:
 #aws-sam-cli-managed-dev-pipeline-resources
   PipelineUser:
     Type: AWS::IAM::User
-    Condition: MissingPipelineUser
     Properties:
       Tags:
         - Key: ManagedStackSource
@@ -167,7 +165,6 @@ Resources:
 
   PipelineUserAccessKey:
     Type: AWS::IAM::AccessKey
-    Condition: MissingPipelineUser
     Properties:
       Serial: 1
       Status: Active
@@ -175,13 +172,11 @@ Resources:
 
   PipelineUserSecretKey:
     Type: AWS::SecretsManager::Secret
-    Condition: MissingPipelineUser
     Properties:
       SecretString: !Sub '{"aws_access_key_id": "${PipelineUserAccessKey}", "aws_secret_access_key": "${PipelineUserAccessKey.SecretAccessKey}"}'
 
   CloudFormationExecutionRole:
     Type: AWS::IAM::Role
-    Condition: MissingCloudFormationExecutionRole
     Properties:
       Tags:
         - Key: ManagedStackSource
@@ -205,7 +200,6 @@ Resources:
 
   PipelineExecutionRole:
     Type: AWS::IAM::Role
-    Condition: MissingPipelineExecutionRole
     Properties:
       Tags:
         - Key: ManagedStackSource
@@ -265,7 +259,6 @@ Resources:
 
   ArtifactsBucket:
     Type: AWS::S3::Bucket
-    Condition: MissingArtifactsBucket
     DeletionPolicy: "Retain"
     Properties:
       Tags:
@@ -284,7 +277,6 @@ Resources:
 
   ArtifactsBucketPolicy:
     Type: AWS::S3::BucketPolicy
-    Condition: MissingArtifactsBucket
     Properties:
       Bucket: !Ref ArtifactsBucket
       PolicyDocument:
@@ -320,7 +312,6 @@ Resources:
 
   ArtifactsLoggingBucket:
     Type: AWS::S3::Bucket
-    Condition: MissingArtifactsBucket
     DeletionPolicy: "Retain"
     Properties:
       AccessControl: "LogDeliveryWrite"
@@ -339,7 +330,6 @@ Resources:
 
   ArtifactsLoggingBucketPolicy:
     Type: AWS::S3::BucketPolicy
-    Condition: MissingArtifactsBucket
     Properties:
       Bucket: !Ref ArtifactsLoggingBucket
       PolicyDocument:
@@ -356,7 +346,6 @@ Resources:
 
   PipelineExecutionRolePermissionPolicy:
     Type: AWS::IAM::Policy
-    Condition: MissingPipelineExecutionRole
     Properties:
       PolicyName: PipelineExecutionRolePermissions
       PolicyDocument:
@@ -413,52 +402,10 @@ Resources:
                 - "ecr:InitiateLayerUpload"
                 - "ecr:UploadLayerPart"
                 - "ecr:CompleteLayerUpload"
-              Resource:
-                Fn::If:
-                  - MissingImageRepository
-                  - !GetAtt ImageRepository.Arn
-                  - !Ref ImageRepositoryArn
             - !Ref AWS::NoValue
       Roles:
         - !Ref PipelineExecutionRole
 
-  ImageRepository:
-    Type: AWS::ECR::Repository
-    Condition: MissingImageRepository
-    Properties:
-      RepositoryPolicyText:
-        Version: "2012-10-17"
-        Statement:
-          - Sid: LambdaECRImageRetrievalPolicy
-            Effect: Allow
-            Principal:
-              Service: lambda.amazonaws.com
-            Action:
-              - "ecr:GetDownloadUrlForLayer"
-              - "ecr:BatchGetImage"
-              - "ecr:GetRepositoryPolicy"
-              - "ecr:SetRepositoryPolicy"
-              - "ecr:DeleteRepositoryPolicy"
-          - Sid: AllowPushPull
-            Effect: Allow
-            Principal:
-              AWS:
-                - Fn::If:
-                  - MissingPipelineExecutionRole
-                  - !GetAtt PipelineExecutionRole.Arn
-                  - !Ref PipelineExecutionRoleArn
-                - Fn::If:
-                  - MissingCloudFormationExecutionRole
-                  - !GetAtt CloudFormationExecutionRole.Arn
-                  - !Ref CloudFormationExecutionRoleArn
-            Action:
-              - "ecr:GetDownloadUrlForLayer"
-              - "ecr:BatchGetImage"
-              - "ecr:BatchCheckLayerAvailability"
-              - "ecr:PutImage"
-              - "ecr:InitiateLayerUpload"
-              - "ecr:UploadLayerPart"
-              - "ecr:CompleteLayerUpload"
 
 #aws-sam-cli-managed-dev-pipeline-resources 
   #   ____
