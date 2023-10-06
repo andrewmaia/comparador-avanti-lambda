@@ -212,10 +212,7 @@ Resources:
           - Effect: Allow
             Principal:
               AWS:
-                - Fn::If:
-                  - MissingPipelineUser
-                  - !GetAtt PipelineUser.Arn
-                  - !Ref PipelineUserArn
+                !GetAtt PipelineUser.Arn
             Action:
               - 'sts:AssumeRole'
           - Effect: Allow
