@@ -134,11 +134,9 @@ Conditions:
   IsMainBranchPipeline: !Equals [!Ref FeatureGitBranch, ""]
   IsFeatureBranchPipeline: !Not [Condition: IsMainBranchPipeline]
   CreateConnection: !Equals [!Ref CodeStarConnectionArn, ""]
-  DontUseOidc: !Not [!Equals [!Ref UseOidcProvider, "true"] ]
   MissingPipelineExecutionRole: !Equals [!Ref PipelineExecutionRoleArn, ""]
   MissingCloudFormationExecutionRole: !Equals [!Ref CloudFormationExecutionRoleArn, ""]
   MissingArtifactsBucket: !Equals [!Ref ArtifactsBucketArn, ""]
-  ShouldHaveImageRepository: !Or [!Equals [!Ref CreateImageRepository, "true"], !Not [!Equals [!Ref ImageRepositoryArn, ""]]]
 
 Resources:
 #aws-sam-cli-managed-dev-pipeline-resources
@@ -346,31 +344,8 @@ Resources:
               - 's3:GetBucket*'
               - 's3:List*'
             Resource:
-              Fn::If:
-                - MissingArtifactsBucket
-                - - !Join [ '',[ !GetAtt ArtifactsBucket.Arn, '/*' ] ]
-                  - !GetAtt ArtifactsBucket.Arn
-                - - !Join [ '',[ !Ref ArtifactsBucketArn, '/*' ] ]
-                  - !Ref ArtifactsBucketArn
-          - Fn::If:
-            - ShouldHaveImageRepository
-            - Effect: "Allow"
-              Action: "ecr:GetAuthorizationToken"
-              Resource: "*"
-            - !Ref AWS::NoValue
-          - Fn::If:
-            - ShouldHaveImageRepository
-            - Effect: "Allow"
-              Action:
-                - "ecr:GetDownloadUrlForLayer"
-                - "ecr:BatchDeleteImage"
-                - "ecr:BatchGetImage"
-                - "ecr:BatchCheckLayerAvailability"
-                - "ecr:PutImage"
-                - "ecr:InitiateLayerUpload"
-                - "ecr:UploadLayerPart"
-                - "ecr:CompleteLayerUpload"
-            - !Ref AWS::NoValue
+              - !Join [ '',[ !GetAtt ArtifactsBucket.Arn, '/*' ] ]
+              - !GetAtt ArtifactsBucket.Arn
       Roles:
         - !Ref PipelineExecutionRole
 
