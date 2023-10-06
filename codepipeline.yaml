@@ -9,7 +9,7 @@ Description: >
   - UpdatePipeline
   - BuildAndDeployFeatureStack (FeatureGitBranch only)
   - BuildAndPackage (MainGitBranch only)
-  - DeployDev (MainGitBranch only)
+  - DeployTest (MainGitBranch only)
   - DeployProd (MainGitBranch only)
 
   **WARNING** You will be billed for the AWS resources used if you create a stack from this template.
@@ -44,16 +44,16 @@ Parameters:
     Default: "us-east-1"
   TestingStackName:
     Type: String
-    Default: "comparador-avanti-lambda-dev"
+    Default: "comparador-avanti-lambda-test"
   TestingPipelineExecutionRole:
     Type: String
-    Default: "arn:aws:iam::884588048908:role/aws-sam-cli-managed-dev-pipe-PipelineExecutionRole-UIA04F9ZT5J6"
+    Default: "arn:aws:iam::884588048908:role/aws-sam-cli-managed-test-pipe-PipelineExecutionRole-UIA04F9ZT5J6"
   TestingCloudFormationExecutionRole:
     Type: String
-    Default: "arn:aws:iam::884588048908:role/aws-sam-cli-managed-dev-p-CloudFormationExecutionR-W0NIY3WSSL7O"
+    Default: "arn:aws:iam::884588048908:role/aws-sam-cli-managed-test-p-CloudFormationExecutionR-W0NIY3WSSL7O"
   TestingArtifactBucket:
     Type: String
-    Default: "aws-sam-cli-managed-dev-pipeline-artifactsbucket-1p1whrq80rst9"
+    Default: ""
   TestingImageRepository:
     Type: String
     # If there are functions with "Image" PackageType in your template,
@@ -95,7 +95,7 @@ Conditions:
   CreateConnection: !Equals [!Ref CodeStarConnectionArn, ""]
 
 Resources:
-#aws-sam-cli-managed-dev-pipeline-resources
+#aws-sam-cli-managed-test-pipeline-resources
   PipelineUser:
     Type: AWS::IAM::User
     Properties:
@@ -295,7 +295,7 @@ Resources:
         - !Ref PipelineExecutionRole
 
 
-#aws-sam-cli-managed-dev-pipeline-resources 
+#aws-sam-cli-managed-test-pipeline-resources 
   #   ____
   # / ___|  ___  _   _ _ __ ___ ___
   # \___ \ / _ \| | | | '__/ __/ _ \
@@ -436,9 +436,9 @@ Resources:
 
         - !If
           - IsMainBranchPipeline
-          - Name: PublicarEmDev
+          - Name: PublicarEmTest
             Actions:
-              - Name: DeployDev
+              - Name: DeployTest
                 ActionTypeId:
                   Category: Build
                   Owner: AWS
@@ -789,7 +789,7 @@ Resources:
           - Name: TESTING_CLOUDFORMATION_EXECUTION_ROLE
             Value: !Ref TestingCloudFormationExecutionRole
           - Name: TESTING_ARTIFACT_BUCKET
-            Value: !Ref TestingArtifactBucket
+            Value: !GetAtt ArtifactsBucket.Arn
           - Name: TESTING_IMAGE_REPOSITORY
             Value: !Ref TestingImageRepository
           - Name: FEATURE_BRANCH_NAME
@@ -822,7 +822,7 @@ Resources:
           - Name: PROD_PIPELINE_EXECUTION_ROLE
             Value: !Ref ProdPipelineExecutionRole
           - Name: TESTING_ARTIFACT_BUCKET
-            Value: !Ref TestingArtifactBucket
+            Value: !GetAtt ArtifactsBucket.Arn
           - Name: PROD_ARTIFACT_BUCKET
             Value: !Ref ProdArtifactBucket
           - Name: TESTING_IMAGE_REPOSITORY
