@@ -207,55 +207,31 @@ Resources:
         - Key: Role
           Value: pipeline-execution-role
       AssumeRolePolicyDocument:
-        Fn::If:
-          - DontUseOidc
-          - Version: 2012-10-17
-            Statement:
-              - Effect: Allow
-                Principal:
-                  AWS:
-                    - Fn::If:
-                      - MissingPipelineUser
-                      - !GetAtt PipelineUser.Arn
-                      - !Ref PipelineUserArn
-                Action:
-                  - 'sts:AssumeRole'
-              - Effect: Allow
-                Principal:
-                  # Allow roles with tag Role=aws-sam-pipeline-codebuild-service-role to assume this role.
-                  # This is required when CodePipeline is the CI/CD system of choice.
-                  AWS:
-                    - !If
-                      - MissingPipelineUser
-                      - !Ref AWS::AccountId
-                      - !Select [4, !Split [':', !Ref PipelineUserArn]]
-                Action:
-                  - 'sts:AssumeRole'
-                Condition:
-                  StringEquals:
-                    aws:PrincipalTag/Role: aws-sam-pipeline-codebuild-service-role
-          - Fn::Sub: 
-              - |
-                {
-                  "Version": "2012-10-17",
-                  "Statement": [
-                    {
-                      "Effect": "Allow",
-                      "Principal": {
-                        "Federated": "arn:${AWS::Partition}:iam::${AWS::AccountId}:oidc-provider/${Url}"
-                      },
-                      "Action": "sts:AssumeRoleWithWebIdentity",
-                      "Condition": {
-                        "ForAllValues:StringLike": {
-                          "${Url}:aud": "${OidcClientId}",
-                          "${Url}:sub":  "${SubjectClaim}"
-                        }
-                      }
-                    }
-                  ]
-                }
-              - Url: !Select [1, !Split ["//", !Ref OidcProviderUrl]]
-
+        Version: 2012-10-17
+        Statement:
+          - Effect: Allow
+            Principal:
+              AWS:
+                - Fn::If:
+                  - MissingPipelineUser
+                  - !GetAtt PipelineUser.Arn
+                  - !Ref PipelineUserArn
+            Action:
+              - 'sts:AssumeRole'
+          - Effect: Allow
+            Principal:
+              # Allow roles with tag Role=aws-sam-pipeline-codebuild-service-role to assume this role.
+              # This is required when CodePipeline is the CI/CD system of choice.
+              AWS:
+                - !If
+                  - MissingPipelineUser
+                  - !Ref AWS::AccountId
+                  - !Select [4, !Split [':', !Ref PipelineUserArn]]
+            Action:
+              - 'sts:AssumeRole'
+            Condition:
+              StringEquals:
+                aws:PrincipalTag/Role: aws-sam-pipeline-codebuild-service-role
 
   ArtifactsBucket:
     Type: AWS::S3::Bucket
