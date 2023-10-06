@@ -134,9 +134,7 @@ Conditions:
   IsMainBranchPipeline: !Equals [!Ref FeatureGitBranch, ""]
   IsFeatureBranchPipeline: !Not [Condition: IsMainBranchPipeline]
   CreateConnection: !Equals [!Ref CodeStarConnectionArn, ""]
-  MissingOidcProvider: !Equals [!Ref CreateNewOidcProvider, "true"] 
   DontUseOidc: !Not [!Equals [!Ref UseOidcProvider, "true"] ]
-  MissingPipelineUser: !And [!Condition DontUseOidc, !Equals [!Ref PipelineUserArn, ""]]
   MissingPipelineExecutionRole: !Equals [!Ref PipelineExecutionRoleArn, ""]
   MissingCloudFormationExecutionRole: !Equals [!Ref CloudFormationExecutionRoleArn, ""]
   MissingArtifactsBucket: !Equals [!Ref ArtifactsBucketArn, ""]
@@ -220,10 +218,7 @@ Resources:
               # Allow roles with tag Role=aws-sam-pipeline-codebuild-service-role to assume this role.
               # This is required when CodePipeline is the CI/CD system of choice.
               AWS:
-                - !If
-                  - MissingPipelineUser
-                  - !Ref AWS::AccountId
-                  - !Select [4, !Split [':', !Ref PipelineUserArn]]
+                !Ref AWS::AccountId
             Action:
               - 'sts:AssumeRole'
             Condition:
