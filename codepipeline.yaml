@@ -134,9 +134,7 @@ Conditions:
   IsMainBranchPipeline: !Equals [!Ref FeatureGitBranch, ""]
   IsFeatureBranchPipeline: !Not [Condition: IsMainBranchPipeline]
   CreateConnection: !Equals [!Ref CodeStarConnectionArn, ""]
-  MissingPipelineExecutionRole: !Equals [!Ref PipelineExecutionRoleArn, ""]
   MissingCloudFormationExecutionRole: !Equals [!Ref CloudFormationExecutionRoleArn, ""]
-  MissingArtifactsBucket: !Equals [!Ref ArtifactsBucketArn, ""]
 
 Resources:
 #aws-sam-cli-managed-dev-pipeline-resources
@@ -266,16 +264,8 @@ Resources:
               - !Join ['',[!GetAtt ArtifactsBucket.Arn, '/*']]
               - !GetAtt ArtifactsBucket.Arn
             Principal:
-              AWS:
-                - Fn::If:
-                  - MissingPipelineExecutionRole
-                  - !GetAtt PipelineExecutionRole.Arn
-                  - !Ref PipelineExecutionRoleArn
-                - Fn::If:
-                  - MissingCloudFormationExecutionRole
-                  - !GetAtt CloudFormationExecutionRole.Arn
-                  - !Ref CloudFormationExecutionRoleArn
-
+              AWS: !GetAtt PipelineExecutionRole.Arn
+              AWS: !GetAtt CloudFormationExecutionRole.Arn
   ArtifactsLoggingBucket:
     Type: AWS::S3::Bucket
     DeletionPolicy: "Retain"
