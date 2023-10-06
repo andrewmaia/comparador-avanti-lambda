@@ -1,3 +1,11 @@
+## Intruções para fazer o deploy deste projeto em uma conta AWS
+
+Todo o passo a passo abaixo já foi realizado. Para fazer deploy deste projeto basta configurar as credencias do AWS através do aws configure e apenas rodar o comando: 
+
+```bash
+sam deploy -t codepipeline.yaml --stack-name comparador-avanti-lambda-pipeline --capabilities=CAPABILITY_IAM
+```
+
 ## Infra como código para as funções Lambda
 
 Este projeto contém funções AWS Lambda.
@@ -70,6 +78,8 @@ sam deploy -t codepipeline.yaml --stack-name comparador-avanti-lambda-pipeline -
 ```
 
 Depois de criada a stack da pipeline, qualquer alteração no código  feitas no repositório das funções lambda e no código de infra do pipeline serão automáticamente atualizadas na AWS. Isso mesmo: A pipeline é capaz de se auto-atualizar.
+
+Importante: A primeira vez que a pipeline rodar ela irá falhar no primeiro estágio. É necessário entrar manualmente no primeiro estágio e finalizar a configuração da conexão com o GITHUB.
 
 ## Como funciona a pipeline criada?
 
