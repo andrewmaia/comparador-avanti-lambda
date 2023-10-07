@@ -360,7 +360,7 @@ Resources:
 
         - !If
           - IsMainBranchPipeline
-          - Name: GerarPacotesPublicacao
+          - Name: GerarPacotePublicacao
             Actions:
               - Name: CodeBuild
                 ActionTypeId:
@@ -398,16 +398,6 @@ Resources:
                 RunOrder: 2 # keeping run order as 2 in case manual approval is enabled
                 Configuration:
                   ProjectName: !Ref CodeBuildProjectDeploy
-                  EnvironmentVariables: !Sub |
-                    [
-                      {"name": "ENV_TEMPLATE", "value": "packaged-prod.yaml"},
-                      {"name": "ENV_REGION", "value": "${ProdRegion}"},
-                      {"name": "ENV_STACK_NAME", "value": "${ProdStackName}"},
-                      {"name": "ENV_PIPELINE_EXECUTION_ROLE", "value": "${ProdPipelineExecutionRole.Arn}"},
-                      {"name": "ENV_CLOUDFORMATION_EXECUTION_ROLE", "value": "${ProdCloudFormationExecutionRole.Arn}"},
-                      {"name": "ENV_BUCKET", "value": "${ProdArtifactsBucket.Arn}"},                      
-                      {"name": "ENV_IMAGE_REPOSITORY", "value": "${ProdImageRepository}"}
-                    ]
                 InputArtifacts:
                   - Name: BuildArtifactAsZip
           - !Ref AWS::NoValue
@@ -721,6 +711,21 @@ Resources:
         Type: LINUX_CONTAINER
         ComputeType: BUILD_GENERAL1_SMALL
         Image: aws/codebuild/amazonlinux2-x86_64-standard:3.0
+        EnvironmentVariables:
+          - Name: ENV_TEMPLATE
+            Value: "packaged-prod.yaml"
+          - Name: ENV_REGION
+            Value: !Ref ProdRegion
+          - Name: ENV_STACK_NAME
+            Value: !Ref ProdStackName            
+          - Name: ENV_PIPELINE_EXECUTION_ROLE
+            Value: !GetAtt ProdPipelineExecutionRole.Arn
+          - Name: ENV_CLOUDFORMATION_EXECUTION_ROLE
+            Value: !GetAtt ProdCloudFormationExecutionRole.Arn            
+          - Name: ENV_BUCKET
+            Value: !Select [5, !Split [':', !GetAtt ProdArtifactsBucket.Arn]]
+          - Name: ENV_IMAGE_REPOSITORY
+            Value: !Ref ProdImageRepository        
       ServiceRole: !GetAtt CodeBuildServiceRole.Arn
       Source:
         Type: CODEPIPELINE
