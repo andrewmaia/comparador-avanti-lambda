@@ -45,12 +45,6 @@ Parameters:
   TestingStackName:
     Type: String
     Default: "comparador-avanti-lambda-test"
-  TestingPipelineExecutionRole:
-    Type: String
-    Default: "arn:aws:iam::884588048908:role/aws-sam-cli-managed-test-pipe-PipelineExecutionRole-UIA04F9ZT5J6"
-  TestingCloudFormationExecutionRole:
-    Type: String
-    Default: "arn:aws:iam::884588048908:role/aws-sam-cli-managed-test-p-CloudFormationExecutionR-W0NIY3WSSL7O"
   TestingArtifactBucket:
     Type: String
     Default: ""
@@ -127,7 +121,7 @@ Resources:
     Properties:
       SecretString: !Sub '{"aws_access_key_id": "${PipelineUserAccessKey}", "aws_secret_access_key": "${PipelineUserAccessKey.SecretAccessKey}"}'
 
-  CloudFormationExecutionRole:
+  TestingCloudFormationExecutionRole:
     Type: AWS::IAM::Role
     Properties:
       Tags:
@@ -150,7 +144,7 @@ Resources:
                 Action: '*'
                 Resource: '*'
 
-  PipelineExecutionRole:
+  TestingPipelineExecutionRole:
     Type: AWS::IAM::Role
     Properties:
       Tags:
@@ -179,7 +173,7 @@ Resources:
               StringEquals:
                 aws:PrincipalTag/Role: aws-sam-pipeline-codebuild-service-role
 
-  ArtifactsBucket:
+  TestingArtifactsBucket:
     Type: AWS::S3::Bucket
     DeletionPolicy: "Retain"
     Properties:
@@ -200,15 +194,15 @@ Resources:
   ArtifactsBucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
-      Bucket: !Ref ArtifactsBucket
+      Bucket: !Ref TestingArtifactsBucket
       PolicyDocument:
         Statement:
           - Effect: "Deny"
             Action: "s3:*"
             Principal: "*"
             Resource:
-              - !Join [ '',[ !GetAtt ArtifactsBucket.Arn, '/*' ] ]
-              - !GetAtt ArtifactsBucket.Arn
+              - !Join [ '',[ !GetAtt TestingArtifactsBucket.Arn, '/*' ] ]
+              - !GetAtt TestingArtifactsBucket.Arn
             Condition:
               Bool:
                 aws:SecureTransport: false
@@ -219,11 +213,11 @@ Resources:
               - 's3:GetBucket*'
               - 's3:List*'
             Resource:
-              - !Join ['',[!GetAtt ArtifactsBucket.Arn, '/*']]
-              - !GetAtt ArtifactsBucket.Arn
+              - !Join ['',[!GetAtt TestingArtifactsBucket.Arn, '/*']]
+              - !GetAtt TestingArtifactsBucket.Arn
             Principal:
-              AWS: !GetAtt PipelineExecutionRole.Arn
-              AWS: !GetAtt CloudFormationExecutionRole.Arn
+              AWS: !GetAtt TestingPipelineExecutionRole.Arn
+              AWS: !GetAtt TestingCloudFormationExecutionRole.Arn
   ArtifactsLoggingBucket:
     Type: AWS::S3::Bucket
     DeletionPolicy: "Retain"
@@ -268,7 +262,7 @@ Resources:
           - Effect: Allow
             Action: 'iam:PassRole'
             Resource:
-              !GetAtt CloudFormationExecutionRole.Arn
+              !GetAtt TestingCloudFormationExecutionRole.Arn
           - Effect: Allow
             Action:
               - "cloudformation:CreateChangeSet"
@@ -289,10 +283,10 @@ Resources:
               - 's3:GetBucket*'
               - 's3:List*'
             Resource:
-              - !Join [ '',[ !GetAtt ArtifactsBucket.Arn, '/*' ] ]
-              - !GetAtt ArtifactsBucket.Arn
+              - !Join [ '',[ !GetAtt TestingArtifactsBucket.Arn, '/*' ] ]
+              - !GetAtt TestingArtifactsBucket.Arn
       Roles:
-        - !Ref PipelineExecutionRole
+        - !Ref TestingPipelineExecutionRole
 
 
 #aws-sam-cli-managed-test-pipeline-resources 
@@ -451,9 +445,9 @@ Resources:
                       {"name": "ENV_TEMPLATE", "value": "packaged-test.yaml"},
                       {"name": "ENV_REGION", "value": "${TestingRegion}"},
                       {"name": "ENV_STACK_NAME", "value": "${TestingStackName}"},
-                      {"name": "ENV_PIPELINE_EXECUTION_ROLE", "value": "${TestingPipelineExecutionRole}"},
-                      {"name": "ENV_CLOUDFORMATION_EXECUTION_ROLE", "value": "${TestingCloudFormationExecutionRole}"},
-                      {"name": "ENV_BUCKET", "value": "${TestingArtifactBucket}"},
+                      {"name": "ENV_PIPELINE_EXECUTION_ROLE", "value": "${TestingPipelineExecutionRole.Arn}"},
+                      {"name": "ENV_CLOUDFORMATION_EXECUTION_ROLE", "value": "${TestingCloudFormationExecutionRole.Arn}"},
+                      {"name": "ENV_BUCKET", "value": "${TestingArtifactsBucket.Arn}"},
                       {"name": "ENV_IMAGE_REPOSITORY", "value": "${TestingImageRepository}"}
                     ]
                 InputArtifacts:
@@ -785,11 +779,11 @@ Resources:
           - Name: TESTING_REGION
             Value: !Ref TestingRegion
           - Name: TESTING_PIPELINE_EXECUTION_ROLE
-            Value: !Ref TestingPipelineExecutionRole
+            Value: !GetAtt TestingPipelineExecutionRole.Arn
           - Name: TESTING_CLOUDFORMATION_EXECUTION_ROLE
-            Value: !Ref TestingCloudFormationExecutionRole
+            Value: !GetAtt TestingCloudFormationExecutionRole.Arn
           - Name: TESTING_ARTIFACT_BUCKET
-            Value: !GetAtt ArtifactsBucket.Arn
+            Value: !GetAtt TestingArtifactsBucket.Arn
           - Name: TESTING_IMAGE_REPOSITORY
             Value: !Ref TestingImageRepository
           - Name: FEATURE_BRANCH_NAME
@@ -818,11 +812,11 @@ Resources:
           - Name: PROD_REGION
             Value: !Ref ProdRegion
           - Name: TESTING_PIPELINE_EXECUTION_ROLE
-            Value: !Ref TestingPipelineExecutionRole
+            Value: !GetAtt TestingPipelineExecutionRole.Arn
           - Name: PROD_PIPELINE_EXECUTION_ROLE
             Value: !Ref ProdPipelineExecutionRole
           - Name: TESTING_ARTIFACT_BUCKET
-            Value: !GetAtt ArtifactsBucket.Arn
+            Value: !GetAtt TestingArtifactsBucket.Arn
           - Name: PROD_ARTIFACT_BUCKET
             Value: !Ref ProdArtifactBucket
           - Name: TESTING_IMAGE_REPOSITORY
