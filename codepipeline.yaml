@@ -7,7 +7,6 @@ Description: >
   The following stages are predefined in this template:
   - Source
   - UpdatePipeline
-  - BuildAndDeployFeatureStack (FeatureGitBranch only)
   - BuildAndPackage (MainGitBranch only)
   - DeployTest (MainGitBranch only)
   - DeployProd (MainGitBranch only)
@@ -20,11 +19,6 @@ Description: >
 # the OAuth handshake with the third-party provider using the installation associated with your connection.
 # See https://docs.aws.amazon.com/dtconsole/latest/userguide/connections-update.html for instructions.
 
-# If later you need to deploy a new CodePipeline to connect to a non-main git branch, run
-# ```
-# sam deploy -t codepipeline.yaml --stack-name <stack-name> --capabilities=CAPABILITY_IAM \
-#   --parameter-overrides="FeatureGitBranch=<branch-name> CodeStarConnectionArn=<codestar-connection-arn>"
-# ```
 
 Parameters:
   GitProviderType:
@@ -39,36 +33,12 @@ Parameters:
   SamTemplate:
     Type: String
     Default: "template.yaml"
-  TestingRegion:
-    Type: String
-    Default: "us-east-1"
-  TestingStackName:
-    Type: String
-    Default: "comparador-avanti-lambda-test"
-  TestingArtifactBucket:
-    Type: String
-    Default: ""
-  TestingImageRepository:
-    Type: String
-    # If there are functions with "Image" PackageType in your template,
-    # Update the line below with image repository URL and add "--image-repository ${TESTING_IMAGE_REPOSITORY}" to
-    # prod "sam package" and "sam deploy" commands in buildspec files (in pipeline/).
-    Default: ""
   ProdRegion:
     Type: String
     Default: "us-east-1"
   ProdStackName:
     Type: String
     Default: "comparador-avanti-lambda-prod"
-  ProdPipelineExecutionRole:
-    Type: String
-    Default: "arn:aws:iam::884588048908:role/aws-sam-cli-managed-prod-pip-PipelineExecutionRole-1MZPZM1XZV0PQ"
-  ProdCloudFormationExecutionExeRole:
-    Type: String
-    Default: "arn:aws:iam::884588048908:role/aws-sam-cli-managed-prod-CloudFormationExecutionR-MK5SG38ZUO7Q"
-  ProdArtifactBucket:
-    Type: String
-    Default: "aws-sam-cli-managed-prod-pipeline-artifactsbucket-1am0127pyl4ls"
   ProdImageRepository:
     Type: String
     # If there are functions with "Image" PackageType in your template,
@@ -85,7 +55,6 @@ Parameters:
 
 Conditions:
   IsMainBranchPipeline: !Equals [!Ref FeatureGitBranch, ""]
-  IsFeatureBranchPipeline: !Not [Condition: IsMainBranchPipeline]
   CreateConnection: !Equals [!Ref CodeStarConnectionArn, ""]
 
 Resources:
@@ -121,7 +90,7 @@ Resources:
     Properties:
       SecretString: !Sub '{"aws_access_key_id": "${PipelineUserAccessKey}", "aws_secret_access_key": "${PipelineUserAccessKey.SecretAccessKey}"}'
 
-  TestingCloudFormationExecutionRole:
+  ProdCloudFormationExecutionRole:
     Type: AWS::IAM::Role
     Properties:
       Tags:
@@ -144,7 +113,7 @@ Resources:
                 Action: '*'
                 Resource: '*'
 
-  TestingPipelineExecutionRole:
+  ProdPipelineExecutionRole:
     Type: AWS::IAM::Role
     Properties:
       Tags:
@@ -173,7 +142,7 @@ Resources:
               StringEquals:
                 aws:PrincipalTag/Role: aws-sam-pipeline-codebuild-service-role
 
-  TestingArtifactsBucket:
+  ProdArtifactsBucket:
     Type: AWS::S3::Bucket
     DeletionPolicy: "Retain"
     Properties:
@@ -194,15 +163,15 @@ Resources:
   ArtifactsBucketPolicy:
     Type: AWS::S3::BucketPolicy
     Properties:
-      Bucket: !Ref TestingArtifactsBucket
+      Bucket: !Ref ProdArtifactsBucket
       PolicyDocument:
         Statement:
           - Effect: "Deny"
             Action: "s3:*"
             Principal: "*"
             Resource:
-              - !Join [ '',[ !GetAtt TestingArtifactsBucket.Arn, '/*' ] ]
-              - !GetAtt TestingArtifactsBucket.Arn
+              - !Join [ '',[ !GetAtt ProdArtifactsBucket.Arn, '/*' ] ]
+              - !GetAtt ProdArtifactsBucket.Arn
             Condition:
               Bool:
                 aws:SecureTransport: false
@@ -213,11 +182,11 @@ Resources:
               - 's3:GetBucket*'
               - 's3:List*'
             Resource:
-              - !Join ['',[!GetAtt TestingArtifactsBucket.Arn, '/*']]
-              - !GetAtt TestingArtifactsBucket.Arn
+              - !Join ['',[!GetAtt ProdArtifactsBucket.Arn, '/*']]
+              - !GetAtt ProdArtifactsBucket.Arn
             Principal:
-              AWS: !GetAtt TestingPipelineExecutionRole.Arn
-              AWS: !GetAtt TestingCloudFormationExecutionRole.Arn
+              AWS: !GetAtt ProdPipelineExecutionRole.Arn
+              AWS: !GetAtt ProdCloudFormationExecutionRole.Arn
   ArtifactsLoggingBucket:
     Type: AWS::S3::Bucket
     DeletionPolicy: "Retain"
@@ -262,7 +231,7 @@ Resources:
           - Effect: Allow
             Action: 'iam:PassRole'
             Resource:
-              !GetAtt TestingCloudFormationExecutionRole.Arn
+              !GetAtt ProdCloudFormationExecutionRole.Arn
           - Effect: Allow
             Action:
               - "cloudformation:CreateChangeSet"
@@ -283,10 +252,10 @@ Resources:
               - 's3:GetBucket*'
               - 's3:List*'
             Resource:
-              - !Join [ '',[ !GetAtt TestingArtifactsBucket.Arn, '/*' ] ]
-              - !GetAtt TestingArtifactsBucket.Arn
+              - !Join [ '',[ !GetAtt ProdArtifactsBucket.Arn, '/*' ] ]
+              - !GetAtt ProdArtifactsBucket.Arn
       Roles:
-        - !Ref TestingPipelineExecutionRole
+        - !Ref ProdPipelineExecutionRole
 
 
 #aws-sam-cli-managed-test-pipeline-resources 
@@ -333,12 +302,7 @@ Resources:
                     !Ref CodeStarConnectionArn,
                   ]
                 FullRepositoryId: !Ref FullRepositoryId
-                BranchName:
-                  !If [
-                    IsFeatureBranchPipeline,
-                    !Ref FeatureGitBranch,
-                    !Ref MainGitBranch,
-                  ]
+                BranchName: !Ref MainGitBranch
               OutputArtifacts:
                 - Name: SourceCodeAsZip
               RunOrder: 1
@@ -395,22 +359,6 @@ Resources:
                 - Name: SourceCodeAsZip
 
         - !If
-          - IsFeatureBranchPipeline
-          - Name: BuildAndDeployFeatureStack
-            Actions:
-              - Name: CodeBuild
-                ActionTypeId:
-                  Category: Build
-                  Owner: AWS
-                  Provider: CodeBuild
-                  Version: "1"
-                Configuration:
-                  ProjectName: !Ref CodeBuildProjectBuildAndDeployFeature
-                InputArtifacts:
-                  - Name: SourceCodeAsZip
-          - !Ref AWS::NoValue
-
-        - !If
           - IsMainBranchPipeline
           - Name: GerarPacotesPublicacao
             Actions:
@@ -428,44 +376,6 @@ Resources:
                   - Name: BuildArtifactAsZip
           - !Ref AWS::NoValue
 
-        - !If
-          - IsMainBranchPipeline
-          - Name: PublicarEmTest
-            Actions:
-              - Name: DeployTest
-                ActionTypeId:
-                  Category: Build
-                  Owner: AWS
-                  Provider: CodeBuild
-                  Version: "1"
-                Configuration:
-                  ProjectName: !Ref CodeBuildProjectDeploy
-                  EnvironmentVariables: !Sub |
-                    [
-                      {"name": "ENV_TEMPLATE", "value": "packaged-test.yaml"},
-                      {"name": "ENV_REGION", "value": "${TestingRegion}"},
-                      {"name": "ENV_STACK_NAME", "value": "${TestingStackName}"},
-                      {"name": "ENV_PIPELINE_EXECUTION_ROLE", "value": "${TestingPipelineExecutionRole.Arn}"},
-                      {"name": "ENV_CLOUDFORMATION_EXECUTION_ROLE", "value": "${TestingCloudFormationExecutionRole.Arn}"},
-                      {"name": "ENV_BUCKET", "value": "${TestingArtifactsBucket.Arn}"},
-                      {"name": "ENV_IMAGE_REPOSITORY", "value": "${TestingImageRepository}"}
-                    ]
-                InputArtifacts:
-                  - Name: BuildArtifactAsZip
-                RunOrder: 1
-              # Uncomment the following step for running the integration tests
-              # - Name: IntegrationTest
-              #   ActionTypeId:
-              #     Category: Build
-              #     Owner: AWS
-              #     Provider: CodeBuild
-              #     Version: "1"
-              #   Configuration:
-              #     ProjectName: !Ref CodeBuildProjectIntegrationTest
-              #   InputArtifacts:
-              #     - Name: SourceCodeAsZip
-              #   RunOrder: 2
-          - !Ref AWS::NoValue
 
         - !If
           - IsMainBranchPipeline
@@ -493,9 +403,9 @@ Resources:
                       {"name": "ENV_TEMPLATE", "value": "packaged-prod.yaml"},
                       {"name": "ENV_REGION", "value": "${ProdRegion}"},
                       {"name": "ENV_STACK_NAME", "value": "${ProdStackName}"},
-                      {"name": "ENV_PIPELINE_EXECUTION_ROLE", "value": "${ProdPipelineExecutionRole}"},
-                      {"name": "ENV_CLOUDFORMATION_EXECUTION_ROLE", "value": "${ProdCloudFormationExecutionExeRole}"},
-                      {"name": "ENV_BUCKET", "value": "${ProdArtifactBucket}"},
+                      {"name": "ENV_PIPELINE_EXECUTION_ROLE", "value": "${ProdPipelineExecutionRole.Arn}"},
+                      {"name": "ENV_CLOUDFORMATION_EXECUTION_ROLE", "value": "${ProdCloudFormationExecutionRole.Arn}"},
+                      {"name": "ENV_BUCKET", "value": "${ProdArtifactsBucket.Arn}"},                      
                       {"name": "ENV_IMAGE_REPOSITORY", "value": "${ProdImageRepository}"}
                     ]
                 InputArtifacts:
@@ -640,10 +550,6 @@ Resources:
                   # Uncomment the line below to enable the unit-tests
                   - !GetAtt CodeBuildProjectUnitTest.Arn
                   - !If
-                    - IsFeatureBranchPipeline
-                    - !GetAtt CodeBuildProjectBuildAndDeployFeature.Arn
-                    - !Ref AWS::NoValue
-                  - !If
                     - IsMainBranchPipeline
                     - !GetAtt CodeBuildProjectBuildAndPackage.Arn
                     - !Ref AWS::NoValue
@@ -762,37 +668,6 @@ Resources:
         Type: CODEPIPELINE
         BuildSpec: pipeline/buildspec_unit_test.yml
 
-  CodeBuildProjectBuildAndDeployFeature:
-    Condition: IsFeatureBranchPipeline
-    Type: AWS::CodeBuild::Project
-    Properties:
-      Artifacts:
-        Type: CODEPIPELINE
-      Environment:
-        Type: LINUX_CONTAINER
-        ComputeType: BUILD_GENERAL1_SMALL
-        Image: aws/codebuild/amazonlinux2-x86_64-standard:3.0
-        PrivilegedMode: true
-        EnvironmentVariables:
-          - Name: SAM_TEMPLATE
-            Value: !Ref SamTemplate
-          - Name: TESTING_REGION
-            Value: !Ref TestingRegion
-          - Name: TESTING_PIPELINE_EXECUTION_ROLE
-            Value: !GetAtt TestingPipelineExecutionRole.Arn
-          - Name: TESTING_CLOUDFORMATION_EXECUTION_ROLE
-            Value: !GetAtt TestingCloudFormationExecutionRole.Arn
-          - Name: TESTING_ARTIFACT_BUCKET
-            Value: !Select [5, !Split [':', !GetAtt TestingArtifactsBucket.Arn]]
-          - Name: TESTING_IMAGE_REPOSITORY
-            Value: !Ref TestingImageRepository
-          - Name: FEATURE_BRANCH_NAME
-            Value: !Ref FeatureGitBranch
-      ServiceRole: !GetAtt CodeBuildServiceRole.Arn
-      Source:
-        Type: CODEPIPELINE
-        BuildSpec: pipeline/buildspec_feature.yml
-
   CodeBuildProjectBuildAndPackage:
     Condition: IsMainBranchPipeline
     Type: AWS::CodeBuild::Project
@@ -807,20 +682,12 @@ Resources:
         EnvironmentVariables:
           - Name: SAM_TEMPLATE
             Value: !Ref SamTemplate
-          - Name: TESTING_REGION
-            Value: !Ref TestingRegion
           - Name: PROD_REGION
             Value: !Ref ProdRegion
-          - Name: TESTING_PIPELINE_EXECUTION_ROLE
-            Value: !GetAtt TestingPipelineExecutionRole.Arn
           - Name: PROD_PIPELINE_EXECUTION_ROLE
-            Value: !Ref ProdPipelineExecutionRole
-          - Name: TESTING_ARTIFACT_BUCKET
-            Value: !Select [5, !Split [':', !GetAtt TestingArtifactsBucket.Arn]]
+            Value: !GetAtt ProdPipelineExecutionRole.Arn
           - Name: PROD_ARTIFACT_BUCKET
-            Value: !Ref ProdArtifactBucket
-          - Name: TESTING_IMAGE_REPOSITORY
-            Value: !Ref TestingImageRepository
+            Value: !Select [5, !Split [':', !GetAtt ProdArtifactsBucket.Arn]]
           - Name: PROD_IMAGE_REPOSITORY
             Value: !Ref ProdImageRepository
       ServiceRole: !GetAtt CodeBuildServiceRole.Arn
