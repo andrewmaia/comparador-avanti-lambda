@@ -1,10 +1,10 @@
 <!-- @format -->
 
-##Boas práticas para desenvolvimento de lambda functions
+## Boas práticas para desenvolvimento de lambda functions
 
 Não colocar o codigo de regra de negocio no handler da função lambda, quebrar em subrotinas e chamar a partir do handler.
 
-Iniciliar SDK's e conexões com banco de dados fora do handler.
+Inicializar SDK's e conexões com banco de dados fora do handler.
 
 Colocar o minimo de dependecias necessárias porque isso atrasa o carremento da função na aws.
 
