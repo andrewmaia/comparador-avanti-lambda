@@ -9,6 +9,6 @@ var event, context;
 describe("Teste Planos", function () {
   it("verifies successful response", async () => {
     const result = await obterPlanos();
-    expect(result.planos.lenght).to.be.equal(2);
+    expect(result.planos.length).to.be.equal(2);
   });
 });
