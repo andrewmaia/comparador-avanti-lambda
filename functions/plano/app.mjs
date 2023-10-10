@@ -1,8 +1,9 @@
 /** @format */
 
-//Verificar o IAM Execution Role da funcao lamda para ela ter acesso ao DynamoDB
+const tableName = process.env.PlanoTable;
+const dynamodb = require('aws-sdk/clients/dynamodb');
+const docClient = new dynamodb.DocumentClient();
 
-//Usar variavel de ambiente para escrever no DynamoDB https://docs.aws.amazon.com/lambda/latest/dg/configuration-envvars.html
 
 export const lambdaHandler = async (event, context) => {
   try {
@@ -20,6 +21,11 @@ export const lambdaHandler = async (event, context) => {
 };
 
 export async function obterPlanos() {
+  const params = {
+    TableName : tableName
+  };
+  const data = await docClient.scan(params).promise();
+  return data.Items;  
   return {
     planos: [
       {
