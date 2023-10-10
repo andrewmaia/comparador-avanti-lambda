@@ -10,7 +10,7 @@ phases:
       # trigger the unit tests here
       - echo 'Running unit tests'
       - ls
-      - cd plano
+      - cd functions/plano
       - ls
       - npm install
       - npm run test
