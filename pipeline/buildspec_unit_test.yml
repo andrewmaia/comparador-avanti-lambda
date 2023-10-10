@@ -1,3 +1,5 @@
+# @format
+
 version: 0.2
 phases:
   install:
@@ -7,7 +9,7 @@ phases:
     commands:
       # trigger the unit tests here
       - echo 'Running unit tests'
-      - cd comparador-avanti-lambda
+      - cd plano
       - ls
       - npm install
-      - npm run test      
+      - npm run test
