@@ -22,7 +22,7 @@ export const lambdaHandler = async (event, context) => {
   }
 };
 
-async function obterPlanos() {
+export async function obterPlanos() {
   return {
     planos: [
       {
