@@ -16,6 +16,8 @@ Todo o passo a passo abaixo já foi realizado. Para fazer deploy deste projeto b
 sam deploy -t codepipeline.yaml --stack-name comparador-avanti-lambda-pipeline --capabilities=CAPABILITY_IAM
 ```
 
+Importante: A primeira vez que a pipeline rodar ela irá falhar no primeiro estágio. É necessário entrar manualmente no primeiro estágio e finalizar a configuração da conexão com o GITHUB.
+
 ## Infra como código para as funções Lambda
 
 Este projeto contém funções AWS Lambda.
