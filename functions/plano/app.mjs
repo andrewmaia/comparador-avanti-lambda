@@ -23,33 +23,10 @@ export const lambdaHandler = async (event, context) => {
 
 export async function obterPlanos() {
   const command = new ScanCommand({
-    ProjectionExpression: "centralLesteDesconto, centralOesteDesconto",
+    ProjectionExpression: "centralLesteDesconto, centralOesteDesconto, golNorteDesconto, golSulDesconto, superiorDesconto, nome, valor",
     TableName: tableName,
   });  
 
   const response = await docClient.send(command);  
-  return response;
-
-  return {
-    planos: [
-      {
-        nome: "Plano Bronze",
-        valor: "17,99",
-        centralOesteDesconto: 0,
-        centralLesteDesconto: 0,
-        golNorteDesconto: 0,
-        golSulDesconto: 0,
-        superiorDesconto: 20,
-      },
-      {
-        nome: "Plano Prata",
-        valor: "41,99",
-        centralOesteDesconto: 0,
-        centralLesteDesconto: 25,
-        golNorteDesconto: 50,
-        golSulDesconto: 50,
-        superiorDesconto: 50,
-      },
-    ],
-  };
+  return response.Items;
 }
