@@ -26,8 +26,8 @@ export async function obterPlanos() {
     TableName: tableName
   });
 
-  /*const response = await docClient.send(command);  
-  return response;*/
+  const response = await docClient.send(command);  
+  /*return response;*/
 
   return {
     planos: [
