@@ -22,11 +22,11 @@ export const lambdaHandler = async (event, context) => {
 };
 
 export async function obterPlanos() {
-  /*const command = new GetCommand({
+  const command = new GetCommand({
     TableName: tableName
   });
 
-  const response = await docClient.send(command);  
+  /*const response = await docClient.send(command);  
   return response;*/
 
   return {
