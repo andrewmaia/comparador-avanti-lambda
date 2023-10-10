@@ -1,35 +1,64 @@
-AWSTemplateFormatVersion: '2010-09-09'
+# @format
+
+AWSTemplateFormatVersion: "2010-09-09"
 Transform: AWS::Serverless-2016-10-31
 Description: >
-  comparador-avanti-lambda
-
-  Sample SAM Template for comparador-avanti-lambda
-  
-# More info about Globals: https://github.com/awslabs/serverless-application-model/blob/master/docs/globals.rst
+  SAM Template comparador-avanti-lambda
 Globals:
   Function:
     Timeout: 3
 
 Resources:
   HelloWorldFunction:
-    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Type: AWS::Serverless::Function
     Properties:
-      CodeUri: comparador-avanti-lambda/
+      CodeUri: functions/hello-world/
       Handler: app.lambdaHandler
       Runtime: nodejs18.x
       Architectures:
         - x86_64
+      MemorySize: 128
       Events:
         HelloWorld:
-          Type: Api # More info about API Event Source: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#api
+          Type: Api
           Properties:
             Path: /hello
             Method: get
 
+  PlanoFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/plano/
+      Handler: app.lambdaHandler
+      Runtime: nodejs18.x
+      Architectures:
+        - x86_64
+      MemorySize: 128
+      Policies:
+        # Acesso Create/Read/Update/Delete para tabela Plano
+        - DynamoDBCrudPolicy:
+            TableName: !Ref Plano
+      Environment:
+        Variables:
+          # Expõe o nome da tabela do DynamoDB como variável de ambiente
+          PlanoTable: !Ref Plano
+      Events:
+        Plano:
+          Type: Api
+          Properties:
+            Path: /planos
+            Method: get
+  Plano:
+    Type: AWS::Serverless::SimpleTable
+    Properties:
+      PrimaryKey:
+        Name: id
+        Type: String
+      ProvisionedThroughput:
+        ReadCapacityUnits: 2
+        WriteCapacityUnits: 2
+
 Outputs:
-  # ServerlessRestApi is an implicit API created out of Events key under Serverless::Function
-  # Find out more about other implicit resources you can reference within SAM
-  # https://github.com/awslabs/serverless-application-model/blob/master/docs/internals/generated_resources.rst#api
   HelloWorldApi:
     Description: "API Gateway endpoint URL for Prod stage for Hello World function"
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/hello/"
@@ -39,3 +68,12 @@ Outputs:
   HelloWorldFunctionIamRole:
     Description: "Implicit IAM Role created for Hello World function"
     Value: !GetAtt HelloWorldFunctionRole.Arn
+  PlanoApi:
+    Description: "API Gateway endpoint URL for Prod stage for Plano function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/plano/"
+  PlanoFunction:
+    Description: "Plano Lambda Function ARN"
+    Value: !GetAtt PlanoFunction.Arn
+  PlanoFunctionIamRole:
+    Description: "Implicit IAM Role created for Plano function"
+    Value: !GetAtt PlanoFunctionRole.Arn
