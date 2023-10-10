@@ -1,9 +1,10 @@
 /** @format */
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+import { DynamoDBDocumentClient, GetCommand } from "@aws-sdk/lib-dynamodb";
 
+const client = new DynamoDBClient({});
+const docClient = DynamoDBDocumentClient.from(client);
 const tableName = process.env.PlanoTable;
-const dynamodb = require('aws-sdk/clients/dynamodb');
-const docClient = new dynamodb.DocumentClient();
-
 
 export const lambdaHandler = async (event, context) => {
   try {
@@ -21,11 +22,13 @@ export const lambdaHandler = async (event, context) => {
 };
 
 export async function obterPlanos() {
-  const params = {
-    TableName : tableName
-  };
-  const data = await docClient.scan(params).promise();
-  return data.Items;  
+  const command = new GetCommand({
+    TableName: "AngryAnimals",
+  });
+
+  const response = await docClient.send(command);  
+  return response;
+
   return {
     planos: [
       {
