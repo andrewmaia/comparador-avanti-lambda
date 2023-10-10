@@ -7,7 +7,7 @@ const docClient = DynamoDBDocumentClient.from(client);
 const tableName = process.env.PlanoTable;
 
 export const lambdaHandler = async (event, context) => {
-  try {
+  //try {
     return {
       statusCode: 200,
       headers: {
@@ -15,10 +15,10 @@ export const lambdaHandler = async (event, context) => {
       },      
       body: JSON.stringify(await obterPlanos()),
     };
-  } catch (err) {
+  /*} catch (err) {
     console.log(err);
     return err;
-  }
+  }*/
 };
 
 export async function obterPlanos() {
