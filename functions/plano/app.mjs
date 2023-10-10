@@ -4,16 +4,13 @@
 
 //Usar variavel de ambiente para escrever no DynamoDB https://docs.aws.amazon.com/lambda/latest/dg/configuration-envvars.html
 
-/*
-Para rodar localmente:
-npm install
-sam local start-api --port 8080
-*/
-
 export const lambdaHandler = async (event, context) => {
   try {
     return {
       statusCode: 200,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+      },      
       body: JSON.stringify(await obterPlanos()),
     };
   } catch (err) {
@@ -27,21 +24,21 @@ export async function obterPlanos() {
     planos: [
       {
         nome: "Plano Bronze",
-        valor: 17.99,
+        valor: "17,99",
         centralOesteDesconto: 0,
         centralLesteDesconto: 0,
         golNorteDesconto: 0,
         golSulDesconto: 0,
-        superior: 0.2,
+        superiorDesconto: 20,
       },
       {
         nome: "Plano Prata",
-        valor: 41.99,
+        valor: "41,99",
         centralOesteDesconto: 0,
-        centralLesteDesconto: 0.25,
-        golNorteDesconto: 0.5,
-        golSulDesconto: 0.5,
-        superior: 0.5,
+        centralLesteDesconto: 25,
+        golNorteDesconto: 50,
+        golSulDesconto: 50,
+        superiorDesconto: 50,
       },
     ],
   };

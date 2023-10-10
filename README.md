@@ -8,6 +8,20 @@ Inicializar SDK's e conexões com banco de dados fora do handler.
 
 Colocar o minimo de dependecias necessárias porque isso atrasa o carremento da função na aws.
 
+## Rodar localmente Lambda Functions
+
+Execute:
+
+```bash
+sam build
+```
+
+Depois
+
+```bash
+sam local start-api --port 8080
+```
+
 ## Intruções para fazer o deploy deste projeto em uma conta AWS
 
 Todo o passo a passo abaixo já foi realizado. Para fazer deploy deste projeto basta configurar as credencias do AWS através do aws configure e apenas rodar o comando:
