@@ -23,7 +23,7 @@ export const lambdaHandler = async (event, context) => {
 
 export async function obterPlanos() {
   const command = new GetCommand({
-    TableName: "AngryAnimals",
+    TableName: "AngryAnimals"
   });
 
   const response = await docClient.send(command);  
