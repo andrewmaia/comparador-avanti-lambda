@@ -70,7 +70,7 @@ Outputs:
     Value: !GetAtt HelloWorldFunctionRole.Arn
   PlanoApi:
     Description: "API Gateway endpoint URL for Prod stage for Plano function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/plano/"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/planos  /"
   PlanoFunction:
     Description: "Plano Lambda Function ARN"
     Value: !GetAtt PlanoFunction.Arn
