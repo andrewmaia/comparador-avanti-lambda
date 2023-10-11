@@ -14,15 +14,16 @@ const planoTable = process.env.PlanoTable;
 export const lambdaHandler = async (event, context) => {
   console.log("REQUEST RECEIVED:\n" + JSON.stringify(event));
   try {
-    sendResponse(event, context, "SUCCESS");
+    await carregarPlanos();
+    await sendResponse(event, context, "SUCCESS");
   } catch (error) {
     console.log(error);
-    sendResponse(event, context, "FAILED");
+    await sendResponse(event, context, "FAILED");
   }
 };
 
 // Send response to the pre-signed S3 URL
-function sendResponse(event, context, responseStatus) {
+async function sendResponse(event, context, responseStatus) {
   var responseBody = JSON.stringify({
     Status: responseStatus,
     Reason:
@@ -31,7 +32,7 @@ function sendResponse(event, context, responseStatus) {
     StackId: event.StackId,
     RequestId: event.RequestId,
     LogicalResourceId: event.LogicalResourceId,
-    Data: responseStatus,
+    Data: { cargaFeita: responseStatus },
   });
 
   console.log("RESPONSE BODY:\n", responseBody);
@@ -50,23 +51,24 @@ function sendResponse(event, context, responseStatus) {
 
   console.log("SENDING RESPONSE...\n");
 
-  var request = https.request(options, function (response) {
-    console.log("STATUS: " + response.statusCode);
-    console.log("HEADERS: " + JSON.stringify(response.headers));
-    // Tell AWS Lambda that the function execution is done
-    context.done();
-  });
+  await new Promise(function (resolve, reject) {
+    var request = https.request(options, function (response) {
+      console.log("STATUS: " + response.statusCode);
+      console.log("HEADERS: " + JSON.stringify(response.headers));
+      // Tell AWS Lambda that the function execution is done
+      context.done();
+    });
 
-  request.on("error", function (error) {
-    console.log("sendResponse Error:" + error);
-    // Tell AWS Lambda that the function execution is done
-    context.done();
-  });
+    request.on("error", function (error) {
+      console.log("sendResponse Error:" + error);
+      // Tell AWS Lambda that the function execution is done
+      context.done();
+    });
 
-  // write data to request body
-  request.write(responseBody);
-  request.end();
-  console.log("Chegou até o fim!!");
+    // write data to request body
+    request.write(responseBody);
+    request.end();
+  });
 }
 
 async function carregarPlanos() {

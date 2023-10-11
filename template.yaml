@@ -77,9 +77,9 @@ Resources:
           PlanoTable: !Ref Plano
 
   CargaInicialResource:
-    Type: 'Custom::MyCustomResource'
+    Type: "Custom::MyCustomResource"
     Properties:
-      ServiceToken: !GetAtt CargaInicialFunction.Arn          
+      ServiceToken: !GetAtt CargaInicialFunction.Arn
 
 Outputs:
   HelloWorldApi:
@@ -102,4 +102,4 @@ Outputs:
     Value: !GetAtt PlanoFunctionRole.Arn
   CargaInicialResponse:
     Description: Data From Lambda Carga Inicial
-    Value: !GetAtt CargaInicialResource.output1    
+    Value: !GetAtt CargaInicialResource.cargaFeita
