@@ -1,12 +1,16 @@
 /** @format */
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, ScanCommand  } from "@aws-sdk/lib-dynamodb";
+import { PutCommand, DynamoDBDocumentClient } from "@aws-sdk/lib-dynamodb";
 
 const client = new DynamoDBClient({});
 const docClient = DynamoDBDocumentClient.from(client);
-const tableName = process.env.PlanoTable;
+const planoTable = process.env.PlanoTable;
 
 export const lambdaHandler = async (event, context) => {
-
+    const responseData = { Result: 'Items added successfully' };
+    await response.send(event, context, response.SUCCESS, responseData);
 };
+
+
+
 
