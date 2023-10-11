@@ -1,0 +1,13 @@
+{
+  "name": "comparador-avanti-lambda-carga-inicial",
+  "version": "1.0.0",
+  "description": "Comparador Avanti Lambda Carga Inicial",
+  "main": "app.js",
+  "author": "SAM CLI",
+  "license": "MIT",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.427.0",
+    "@aws-sdk/lib-dynamodb": "^3.427.0",
+    "axios": ">=0.21.1"
+  }
+}

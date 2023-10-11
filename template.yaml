@@ -58,6 +58,29 @@ Resources:
         ReadCapacityUnits: 2
         WriteCapacityUnits: 2
 
+  CargaInicialFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/carga-inicial/
+      Handler: app.lambdaHandler
+      Runtime: nodejs18.x
+      Architectures:
+        - x86_64
+      MemorySize: 128
+      Policies:
+        # Acesso Create/Read/Update/Delete para tabela Plano
+        - DynamoDBCrudPolicy:
+            TableName: !Ref Plano
+      Environment:
+        Variables:
+          # Expõe o nome da tabela do DynamoDB como variável de ambiente
+          PlanoTable: !Ref Plano
+
+  CargaInicialResource:
+    Type: 'Custom::MyCustomResource'
+    Properties:
+      ServiceToken: !GetAtt CargaInicialFunction.Arn          
+
 Outputs:
   HelloWorldApi:
     Description: "API Gateway endpoint URL for Prod stage for Hello World function"
