@@ -100,3 +100,6 @@ Outputs:
   PlanoFunctionIamRole:
     Description: "Implicit IAM Role created for Plano function"
     Value: !GetAtt PlanoFunctionRole.Arn
+  CargaInicialResponse:
+    Description: Data From Lambda Carga Inicial
+    Value: !GetAtt CargaInicialResource.output1    
