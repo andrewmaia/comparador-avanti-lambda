@@ -2,7 +2,7 @@
 
 ## Boas práticas para desenvolvimento de lambda functions
 
-Não colocar o codigo de regra de negocio no handler da função lambda, quebrar em subrotinas e chamar a partir do handler.
+Não  colocar o codigo de regra de negocio no handler da função lambda, quebrar em subrotinas e chamar a partir do handler.
 
 Inicializar SDK's e conexões com banco de dados fora do handler.
 

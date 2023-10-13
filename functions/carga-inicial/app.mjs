@@ -13,7 +13,7 @@ const planoTable = process.env.PlanoTable;
 const jogoTable = process.env.JogoTable;
 
 /*Depois que é feita a carga é necessário fazer uma chamada HTTP para o cloudformation
-  para avisar que a carga foi finalizada. Se não realizar a chamado a stack fica paralizada.
+  para avisar que a carga foi finalizada. Se não realizar a chamada a stack fica paralisada.
 */
 
 export const lambdaHandler = async (event, context) => {
