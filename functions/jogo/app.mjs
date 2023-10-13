@@ -4,7 +4,7 @@ import { DynamoDBDocumentClient, ScanCommand } from "@aws-sdk/lib-dynamodb";
 
 const client = new DynamoDBClient({});
 const docClient = DynamoDBDocumentClient.from(client);
-const planoTable = process.env.PlanoTable;
+const jogoTable = process.env.JogoTable;
 
 export const lambdaHandler = async (event, context) => {
   try {
@@ -13,7 +13,7 @@ export const lambdaHandler = async (event, context) => {
       headers: {
         "Access-Control-Allow-Origin": "*",
       },
-      body: JSON.stringify(await obterPlanos()),
+      body: JSON.stringify(await obterJogos()),
     };
   } catch (err) {
     console.log(err);
@@ -21,11 +21,11 @@ export const lambdaHandler = async (event, context) => {
   }
 };
 
-export async function obterPlanos() {
+export async function obterJogos() {
   const command = new ScanCommand({
     ProjectionExpression:
-      "centralLesteDesconto, centralOesteDesconto, golNorteDesconto, golSulDesconto, superiorDesconto, nome, valor",
-    TableName: planoTable,
+      "adversario, data, centralOesteValor, centralLesteValor, golNorteValor, golSulValor, superiorValor",
+    TableName: jogoTable,
   });
 
   const response = await docClient.send(command);

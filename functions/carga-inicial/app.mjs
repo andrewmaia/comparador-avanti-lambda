@@ -10,6 +10,7 @@ import * as https from "https";
 const client = new DynamoDBClient({});
 const docClient = DynamoDBDocumentClient.from(client);
 const planoTable = process.env.PlanoTable;
+const jogoTable = process.env.JogoTable;
 
 /*Depois que é feita a carga é necessário fazer uma chamada HTTP para o cloudformation
   para avisar que a carga foi finalizada. Se não realizar a chamado a stack fica paralizada.
@@ -19,6 +20,7 @@ export const lambdaHandler = async (event, context) => {
   console.log("REQUEST RECEIVED:\n" + JSON.stringify(event));
   try {
     await carregarPlanos();
+    await carregarJogos();
     await sendResponse(event, context, "SUCCESS");
   } catch (error) {
     console.log(error);
@@ -113,6 +115,106 @@ async function carregarPlanos() {
               golNorteDesconto: 50,
               golSulDesconto: 50,
               superiorDesconto: 50,
+            },
+          },
+        },
+        {
+          PutRequest: {
+            Item: {
+              id: "3",
+              nome: "Prata Superior",
+              valor: "77,99",
+              centralOesteDesconto: 0,
+              centralLesteDesconto: 25,
+              superiorDesconto: 75,
+              golNorteDesconto: 50,
+              golSulDesconto: 50,
+            },
+          },
+        },
+        {
+          PutRequest: {
+            Item: {
+              id: "4",
+              nome: "Plano Ouro",
+              valor: "144,99",
+              centralOesteDesconto: 25,
+              centralLesteDesconto: 50,
+              superiorDesconto: 75,
+              golSulDesconto: 75,
+              golNorteDesconto: 100,
+            },
+          },
+        },
+        {
+          PutRequest: {
+            Item: {
+              id: "5",
+              nome: "Plano Platina",
+              valor: "259,99",
+              centralOesteDesconto: 50,
+              centralLesteDesconto: 75,
+              superiorDesconto: 100,
+              golNorteDesconto: 100,
+              golSulDesconto: 100,
+            },
+          },
+        },
+        {
+          PutRequest: {
+            Item: {
+              id: "6",
+              nome: "Plano Diamante",
+              valor: "779,99",
+              centralOesteDesconto: 100,
+              centralLesteDesconto: 100,
+              superiorDesconto: 100,
+              golSulDesconto: 100,
+              golNorteDesconto: 100,
+            },
+          },
+        },
+      ],
+    },
+  });
+
+  await docClient.send(command);
+}
+
+async function carregarJogos() {
+  await waitUntilTableExists(
+    { client: client, maxWaitTime: 120 },
+    { TableName: jogoTable }
+  );
+
+  const command = new BatchWriteCommand({
+    RequestItems: {
+      [jogoTable]: [
+        {
+          PutRequest: {
+            Item: {
+              id: "1",
+              adversario: "Atlético Mineiro",
+              data: "2023-03-25",
+              centralOesteValor: 120,
+              centralLesteValor: 100,
+              golNorteValor: 50,
+              golSulValor: 60,
+              superiorValor: 80,
+            },
+          },
+        },
+        {
+          PutRequest: {
+            Item: {
+              id: "2",
+              adversario: "Santos",
+              data: "2023-04-05",
+              centralOesteValor: 120,
+              centralLesteValor: 100,
+              golNorteValor: 50,
+              golSulValor: 60,
+              superiorValor: 80,
             },
           },
         },
