@@ -195,7 +195,7 @@ async function carregarJogos() {
             Item: {
               id: "1",
               adversario: "Atlético Mineiro",
-              data: "2023-03-25",
+              dataJogo: "2023-03-25",
               centralOesteValor: 120,
               centralLesteValor: 100,
               golNorteValor: 50,
@@ -209,7 +209,7 @@ async function carregarJogos() {
             Item: {
               id: "2",
               adversario: "Santos",
-              data: "2023-04-05",
+              dataJogo: "2023-04-05",
               centralOesteValor: 120,
               centralLesteValor: 100,
               golNorteValor: 50,
