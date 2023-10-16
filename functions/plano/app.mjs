@@ -24,7 +24,7 @@ export const lambdaHandler = async (event, context) => {
 export async function obterPlanos() {
   const command = new ScanCommand({
     ProjectionExpression:
-      "centralLesteDesconto, centralOesteDesconto, golNorteDesconto, golSulDesconto, superiorDesconto, nome, valor",
+      "id, nome, valor,centralLesteDesconto, centralOesteDesconto, golNorteDesconto, golSulDesconto, superiorDesconto",
     TableName: planoTable,
   });
 

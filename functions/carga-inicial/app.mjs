@@ -57,7 +57,7 @@ async function sendResponse(event, context, responseStatus) {
 
   console.log("SENDING RESPONSE...\n");
 
-  /*Tem 'envelopar' a chamada a http numa promise para poder aguardar a finalização da 
+  /*Tem que 'envelopar' a chamada  http numa promise para poder aguardar a finalização da 
     chamada http. Se não a função lambda é encerrada e finaliza a chamada http antes de
     terminar.
   */
