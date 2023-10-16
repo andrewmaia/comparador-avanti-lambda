@@ -150,7 +150,7 @@ export const lambdaHandler = async (event, context) => {
         "Access-Control-Allow-Origin": "*",
         "content-type": "application/json",
       },
-      body: p,
+      body: JSON.stringify(await obterJogos()),
     };
   } catch (err) {
     console.log(err);
