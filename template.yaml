@@ -77,6 +77,33 @@ Resources:
             Path: /jogos
             Method: get
 
+  CompararFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/comparar/
+      Handler: app.lambdaHandler
+      Runtime: nodejs18.x
+      Architectures:
+        - x86_64
+      MemorySize: 128
+      Policies:
+        # Acesso Create/Read/Update/Delete para tabela Jogo e Plano
+        - DynamoDBCrudPolicy:
+            TableName: !Ref Jogo
+        - DynamoDBCrudPolicy:
+            TableName: !Ref Plano
+      Environment:
+        Variables:
+          # Expõe o nome da tabela do DynamoDB como variável de ambiente
+          JogoTable: !Ref Jogo
+          PlanoTable: !Ref Plano
+      Events:
+        Plano:
+          Type: Api
+          Properties:
+            Path: /comparar
+            Method: post
+
   CargaInicialFunction:
     Type: AWS::Serverless::Function
     Properties:
@@ -106,7 +133,7 @@ Resources:
 Outputs:
   PlanoApi:
     Description: "API Gateway endpoint URL for Prod stage for Plano function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/planos  /"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/planos"
   PlanoFunction:
     Description: "Plano Lambda Function ARN"
     Value: !GetAtt PlanoFunction.Arn
@@ -115,13 +142,22 @@ Outputs:
     Value: !GetAtt PlanoFunctionRole.Arn
   JogoApi:
     Description: "API Gateway endpoint URL for Prod stage for Jogo function"
-    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/jogos  /"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/jogos"
   JogoFunction:
     Description: "Jogo Lambda Function ARN"
     Value: !GetAtt JogoFunction.Arn
   JogoFunctionIamRole:
     Description: "Implicit IAM Role created for Jogo function"
     Value: !GetAtt JogoFunctionRole.Arn
+  CompararApi:
+    Description: "API Gateway endpoint URL for Prod stage for Comparar function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/comparar"
+  CompararFunction:
+    Description: "Comparar Lambda Function ARN"
+    Value: !GetAtt CompararFunction.Arn
+  CompararFunctionIamRole:
+    Description: "Implicit IAM Role created for Comparar function"
+    Value: !GetAtt CompararFunctionRole.Arn
   CargaInicialResponse:
     Description: Data From Lambda Carga Inicial
     Value: !GetAtt CargaInicialResource.cargaFeita

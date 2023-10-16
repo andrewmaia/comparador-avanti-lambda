@@ -1,0 +1,20 @@
+{
+  "name": "comparador-avanti-lambd-plano",
+  "version": "1.0.0",
+  "description": "Comparador Avanti Lambda Planos",
+  "main": "app.js",
+  "author": "SAM CLI",
+  "license": "MIT",
+  "dependencies": {
+    "@aws-sdk/client-dynamodb": "^3.427.0",
+    "@aws-sdk/lib-dynamodb": "^3.427.0",
+    "axios": ">=0.21.1"
+  },
+  "scripts": {
+    "test": "mocha tests/unit/"
+  },
+  "devDependencies": {
+    "chai": "^4.3.6",
+    "mocha": "^10.1.0"
+  }
+}

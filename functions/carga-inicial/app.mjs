@@ -95,7 +95,7 @@ async function carregarPlanos() {
             Item: {
               id: "1",
               nome: "Plano Bronze",
-              valor: "17,99",
+              valor: 17.99,
               centralOesteDesconto: 0,
               centralLesteDesconto: 0,
               golNorteDesconto: 0,
@@ -109,7 +109,7 @@ async function carregarPlanos() {
             Item: {
               id: "2",
               nome: "Plano Prata",
-              valor: "41,99",
+              valor: 41.99,
               centralOesteDesconto: 0,
               centralLesteDesconto: 25,
               golNorteDesconto: 50,
@@ -123,7 +123,7 @@ async function carregarPlanos() {
             Item: {
               id: "3",
               nome: "Prata Superior",
-              valor: "77,99",
+              valor: 77.99,
               centralOesteDesconto: 0,
               centralLesteDesconto: 25,
               superiorDesconto: 75,
@@ -137,7 +137,7 @@ async function carregarPlanos() {
             Item: {
               id: "4",
               nome: "Plano Ouro",
-              valor: "144,99",
+              valor: 144.99,
               centralOesteDesconto: 25,
               centralLesteDesconto: 50,
               superiorDesconto: 75,
@@ -151,7 +151,7 @@ async function carregarPlanos() {
             Item: {
               id: "5",
               nome: "Plano Platina",
-              valor: "259,99",
+              valor: 259.99,
               centralOesteDesconto: 50,
               centralLesteDesconto: 75,
               superiorDesconto: 100,
@@ -165,7 +165,7 @@ async function carregarPlanos() {
             Item: {
               id: "6",
               nome: "Plano Diamante",
-              valor: "779,99",
+              valor: 779.99,
               centralOesteDesconto: 100,
               centralLesteDesconto: 100,
               superiorDesconto: 100,
