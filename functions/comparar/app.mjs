@@ -48,9 +48,20 @@ export const lambdaHandler = async (event, context) => {
           case "cl":
             valorIngressoInteiro = jogo.centraLesteValor;
             break;
-          case "s":
-            valorIngressoInteiro = jogo.superiorValor;
+          case "sn":
+            valorIngressoInteiro = jogo.superiorNorteValor;
             break;
+          case "ss":
+            valorIngressoInteiro = jogo.superiorSulValor;
+            break;
+          case "sl":
+            valorIngressoInteiro = jogo.superiorLesteValor;
+            break;
+          case "so":
+            valorIngressoInteiro = jogo.superiorOesteValor;
+            break;
+          default:
+            valorIngressoInteiro = 0;
         }
         planoAvulso.jogos.push({
           jogoId: jogo.id,
@@ -84,11 +95,28 @@ export const lambdaHandler = async (event, context) => {
                 jogo.centraLesteValor -
                 jogo.centraLesteValor * (plano.centralLesteDesconto / 100);
               break;
-            case "s":
+            case "sn":
               valorIngresso =
-                jogo.superiorValor -
-                jogo.superiorValor * (plano.superiorDesconto / 100);
+                jogo.superiorNorteValor -
+                jogo.superiorNorteValor * (plano.superiorDesconto / 100);
               break;
+            case "ss":
+              valorIngresso =
+                jogo.superiorSulValor -
+                jogo.superiorSulValor * (plano.superiorDesconto / 100);
+              break;
+            case "sl":
+              valorIngresso =
+                jogo.superiorLesteValor -
+                jogo.superiorLesteValor * (plano.superiorDesconto / 100);
+              break;
+            case "so":
+              valorIngresso =
+                jogo.superiorOesteValor -
+                jogo.superiorOesteValor * (plano.superiorDesconto / 100);
+              break;
+            default:
+              valorIngresso = 0;
           }
 
           if (!planosComparados.has(plano.id)) {
@@ -172,7 +200,7 @@ async function obterPlanos() {
 export async function obterJogos() {
   const command = new ScanCommand({
     ProjectionExpression:
-      "id, adversario, dataJogo, centralOesteValor, centralLesteValor, golNorteValor, golSulValor, superiorValor",
+      "id, adversario, dataJogo, centralOesteValor, centralLesteValor, golNorteValor, golSulValor, superiorNorteValor, superiorSulValor, superiorOesteValor, superiorLesteValor",
     TableName: jogoTable,
   });
 
