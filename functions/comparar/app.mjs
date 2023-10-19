@@ -30,14 +30,16 @@ export const lambdaHandler = async (event, context) => {
 async function comparar(body, planos, jogos) {
   const planosComparados = new Map();
   //Sem plano
-  const planoAvulso = {
-    planoId: 0,
-    planoNome: "Sem Plano",
-    planoValor: 0,
-    valorMensalidadePeriodo: 0,
-    valorTotal: 0,
-    jogos: [],
-  };
+  planos.push({
+    id: "0",
+    nome: "Sem Plano",
+    valor: 0,
+    golNorteDesconto: 0,
+    golSulDesconto: 0,
+    centralLesteDesconto: 0,
+    centralOesteDesconto: 0,
+    superiorDesconto: 0,
+  });
 
   let params = body.split("&");
   params.forEach((keyAndValue) => {
@@ -45,48 +47,7 @@ async function comparar(body, planos, jogos) {
     let jogoId = keyValueArray[0];
     let setor = keyValueArray[1];
     if (setor !== "") {
-      let jogo = jogos.find((jogo) => {
-        return jogo.id == jogoId;
-      });
-
-      //Sem plano
-      let valorIngressoInteiro = 0;
-      switch (setor) {
-        case "gn":
-          valorIngressoInteiro = jogo.golNorteValor;
-          break;
-        case "gs":
-          valorIngressoInteiro = jogo.golSulValor;
-          break;
-        case "co":
-          valorIngressoInteiro = jogo.centralOesteValor;
-          break;
-        case "cl":
-          valorIngressoInteiro = jogo.centraLesteValor;
-          break;
-        case "sn":
-          valorIngressoInteiro = jogo.superiorNorteValor;
-          break;
-        case "ss":
-          valorIngressoInteiro = jogo.superiorSulValor;
-          break;
-        case "sl":
-          valorIngressoInteiro = jogo.superiorLesteValor;
-          break;
-        case "so":
-          valorIngressoInteiro = jogo.superiorOesteValor;
-          break;
-        default:
-          valorIngressoInteiro = 0;
-      }
-      planoAvulso.jogos.push({
-        jogoId: jogo.id,
-        jogoAdversario: jogo.adversario,
-        jogoData: jogo.dataJogo,
-        setorComprado: setor,
-        valorIngresso: valorIngressoInteiro,
-      });
-      //Sem plano
+      let jogo = jogos.find((jogo) => jogo.id === jogoId);
 
       planos.forEach((plano) => {
         let valorIngresso = 0;
@@ -178,13 +139,6 @@ async function comparar(body, planos, jogos) {
     p.push(plano);
   });
 
-  //Sem plano
-  const valorJogos = planoAvulso.jogos.reduce((total, jogo) => {
-    return { valorIngresso: total.valorIngresso + jogo.valorIngresso };
-  }).valorIngresso;
-  planoAvulso.valorTotal = valorJogos;
-  p.push(planoAvulso);
-
   return p;
 }
 
@@ -199,7 +153,7 @@ async function obterPlanos() {
   return response.Items;
 }
 
-export async function obterJogos() {
+async function obterJogos() {
   const command = new ScanCommand({
     ProjectionExpression:
       "id, adversario, dataJogo, centralOesteValor, centralLesteValor, golNorteValor, golSulValor, superiorNorteValor, superiorSulValor, superiorOesteValor, superiorLesteValor",
