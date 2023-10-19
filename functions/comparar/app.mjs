@@ -94,8 +94,7 @@ function comparar(body, planos, jogos) {
     });
   });
 
-  const p = [];
-  planosComparados.forEach(function (plano, planoId) {
+  planosComparados.forEach(function (plano) {
     plano.jogos.sort((a, b) => {
       return new Date(a.jogoData) - new Date(b.jogoData);
     });
@@ -109,10 +108,9 @@ function comparar(body, planos, jogos) {
       return { valorIngresso: total.valorIngresso + jogo.valorIngresso };
     }).valorIngresso;
     plano.valorTotal = plano.valorMensalidadePeriodo + valorJogos;
-    p.push(plano);
   });
 
-  return p;
+  return Array.from(planosComparados.values());
 }
 
 function calcularValorJogo(jogo, setor, plano, planosComparados) {
