@@ -11,7 +11,7 @@ export const lambdaHandler = async (event, context) => {
   try {
     let planos = await obterPlanos();
     let jogos = await obterJogos();
-    const planosComparados = await comparar(event.body, planos, jogos);
+    const planosComparados = comparar(event.body, planos, jogos);
     console.log(JSON.stringify(planosComparados));
     return {
       statusCode: 200,
@@ -27,8 +27,9 @@ export const lambdaHandler = async (event, context) => {
   }
 };
 
-async function comparar(body, planos, jogos) {
+function comparar(body, planos, jogos) {
   const planosComparados = new Map();
+
   //Sem plano
   planos.push({
     id: "0",
@@ -46,79 +47,81 @@ async function comparar(body, planos, jogos) {
     let keyValueArray = keyAndValue.split("=");
     let jogoId = keyValueArray[0];
     let setor = keyValueArray[1];
-    if (setor !== "") {
-      let jogo = jogos.find((jogo) => jogo.id === jogoId);
 
-      planos.forEach((plano) => {
-        let valorIngresso = 0;
-        switch (setor) {
-          case "gn":
-            valorIngresso =
-              jogo.golNorteValor -
-              jogo.golNorteValor * (plano.golNorteDesconto / 100);
-            break;
-          case "gs":
-            valorIngresso =
-              jogo.golSulValor -
-              jogo.golSulValor * (plano.golSulDesconto / 100);
-            break;
-          case "co":
-            valorIngresso =
-              jogo.centralOesteValor -
-              jogo.centralOesteValor * (plano.centralOesteDesconto / 100);
-            break;
-          case "cl":
-            valorIngresso =
-              jogo.centraLesteValor -
-              jogo.centraLesteValor * (plano.centralLesteDesconto / 100);
-            break;
-          case "sn":
-            valorIngresso =
-              jogo.superiorNorteValor -
-              jogo.superiorNorteValor * (plano.superiorDesconto / 100);
-            break;
-          case "ss":
-            valorIngresso =
-              jogo.superiorSulValor -
-              jogo.superiorSulValor * (plano.superiorDesconto / 100);
-            break;
-          case "sl":
-            valorIngresso =
-              jogo.superiorLesteValor -
-              jogo.superiorLesteValor * (plano.superiorDesconto / 100);
-            break;
-          case "so":
-            valorIngresso =
-              jogo.superiorOesteValor -
-              jogo.superiorOesteValor * (plano.superiorDesconto / 100);
-            break;
-          default:
-            valorIngresso = 0;
-        }
+    if (setor === "")
+      //Não foi no jogo
+      return;
 
-        if (!planosComparados.has(plano.id)) {
-          planosComparados.set(plano.id, {
-            planoId: plano.id,
-            planoNome: plano.nome,
-            planoValor: plano.valor,
-            valorMensalidadePeriodo: 0,
-            valorTotal: 0,
-            jogos: [],
-          });
-        }
+    let jogo = jogos.find((jogo) => jogo.id === jogoId);
 
-        const planoComparado = planosComparados.get(plano.id);
-        planoComparado.jogos.push({
-          jogoId: jogo.id,
-          jogoAdversario: jogo.adversario,
-          jogoData: jogo.dataJogo,
-          setorComprado: setor,
-          valorIngresso: valorIngresso,
+    planos.forEach((plano) => {
+      let valorIngresso = 0;
+      switch (setor) {
+        case "gn":
+          valorIngresso =
+            jogo.golNorteValor -
+            jogo.golNorteValor * (plano.golNorteDesconto / 100);
+          break;
+        case "gs":
+          valorIngresso =
+            jogo.golSulValor - jogo.golSulValor * (plano.golSulDesconto / 100);
+          break;
+        case "co":
+          valorIngresso =
+            jogo.centralOesteValor -
+            jogo.centralOesteValor * (plano.centralOesteDesconto / 100);
+          break;
+        case "cl":
+          valorIngresso =
+            jogo.centraLesteValor -
+            jogo.centraLesteValor * (plano.centralLesteDesconto / 100);
+          break;
+        case "sn":
+          valorIngresso =
+            jogo.superiorNorteValor -
+            jogo.superiorNorteValor * (plano.superiorDesconto / 100);
+          break;
+        case "ss":
+          valorIngresso =
+            jogo.superiorSulValor -
+            jogo.superiorSulValor * (plano.superiorDesconto / 100);
+          break;
+        case "sl":
+          valorIngresso =
+            jogo.superiorLesteValor -
+            jogo.superiorLesteValor * (plano.superiorDesconto / 100);
+          break;
+        case "so":
+          valorIngresso =
+            jogo.superiorOesteValor -
+            jogo.superiorOesteValor * (plano.superiorDesconto / 100);
+          break;
+        default:
+          valorIngresso = 0;
+      }
+
+      if (!planosComparados.has(plano.id)) {
+        planosComparados.set(plano.id, {
+          planoId: plano.id,
+          planoNome: plano.nome,
+          planoValor: plano.valor,
+          valorMensalidadePeriodo: 0,
+          valorTotal: 0,
+          jogos: [],
         });
+      }
 
-        //console.log(`Plano:${plano.nome}. Valor ingresso:${valorIngresso}`);
+      const planoComparado = planosComparados.get(plano.id);
+      planoComparado.jogos.push({
+        jogoId: jogo.id,
+        jogoAdversario: jogo.adversario,
+        jogoData: jogo.dataJogo,
+        setorComprado: setor,
+        valorIngresso: valorIngresso,
       });
-    }
+
+      //console.log(`Plano:${plano.nome}. Valor ingresso:${valorIngresso}`);
+    });
   });
 
   const p = [];
