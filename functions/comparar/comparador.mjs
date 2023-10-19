@@ -56,7 +56,7 @@ export function comparar(body, planos, jogos) {
   return Array.from(planosComparados.values());
 }
 
-function calcularValorJogoPorPlano(jogo, setor, plano, planosComparados) {
+function calcularValorJogoPorPlano(jogo, setor, plano) {
   let valorIngresso = 0;
   switch (setor) {
     case "gn":

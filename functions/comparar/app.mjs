@@ -1,7 +1,7 @@
 /** @format */
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DynamoDBDocumentClient, ScanCommand } from "@aws-sdk/lib-dynamodb";
-import { comparar } from "comparador.mjs";
+import { comparar } from "./comparador.mjs";
 
 const client = new DynamoDBClient({});
 const docClient = DynamoDBDocumentClient.from(client);
@@ -10,6 +10,7 @@ const planoTable = process.env.PlanoTable;
 
 export const lambdaHandler = async (event, context) => {
   try {
+    console.log(JSON.stringify(event));
     let planos = await obterPlanos();
     let jogos = await obterJogos();
     const planosComparados = comparar(event.body, planos, jogos);
