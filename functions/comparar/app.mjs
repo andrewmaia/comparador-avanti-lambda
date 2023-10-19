@@ -27,6 +27,28 @@ export const lambdaHandler = async (event, context) => {
   }
 };
 
+async function obterPlanos() {
+  const command = new ScanCommand({
+    ProjectionExpression:
+      "id, centralLesteDesconto, centralOesteDesconto, golNorteDesconto, golSulDesconto, superiorDesconto, nome, valor",
+    TableName: planoTable,
+  });
+
+  const response = await docClient.send(command);
+  return response.Items;
+}
+
+async function obterJogos() {
+  const command = new ScanCommand({
+    ProjectionExpression:
+      "id, adversario, dataJogo, centralOesteValor, centralLesteValor, golNorteValor, golSulValor, superiorNorteValor, superiorSulValor, superiorOesteValor, superiorLesteValor",
+    TableName: jogoTable,
+  });
+
+  const response = await docClient.send(command);
+  return response.Items;
+}
+
 function comparar(body, planos, jogos) {
   const planosComparados = new Map();
 
@@ -48,80 +70,14 @@ function comparar(body, planos, jogos) {
     let jogoId = keyValueArray[0];
     let setor = keyValueArray[1];
 
-    if (setor === "")
-      //Não foi no jogo
-      return;
+    //Não foi no jogo
+    if (setor === "") return;
 
     let jogo = jogos.find((jogo) => jogo.id === jogoId);
 
-    planos.forEach((plano) => {
-      let valorIngresso = 0;
-      switch (setor) {
-        case "gn":
-          valorIngresso =
-            jogo.golNorteValor -
-            jogo.golNorteValor * (plano.golNorteDesconto / 100);
-          break;
-        case "gs":
-          valorIngresso =
-            jogo.golSulValor - jogo.golSulValor * (plano.golSulDesconto / 100);
-          break;
-        case "co":
-          valorIngresso =
-            jogo.centralOesteValor -
-            jogo.centralOesteValor * (plano.centralOesteDesconto / 100);
-          break;
-        case "cl":
-          valorIngresso =
-            jogo.centraLesteValor -
-            jogo.centraLesteValor * (plano.centralLesteDesconto / 100);
-          break;
-        case "sn":
-          valorIngresso =
-            jogo.superiorNorteValor -
-            jogo.superiorNorteValor * (plano.superiorDesconto / 100);
-          break;
-        case "ss":
-          valorIngresso =
-            jogo.superiorSulValor -
-            jogo.superiorSulValor * (plano.superiorDesconto / 100);
-          break;
-        case "sl":
-          valorIngresso =
-            jogo.superiorLesteValor -
-            jogo.superiorLesteValor * (plano.superiorDesconto / 100);
-          break;
-        case "so":
-          valorIngresso =
-            jogo.superiorOesteValor -
-            jogo.superiorOesteValor * (plano.superiorDesconto / 100);
-          break;
-        default:
-          valorIngresso = 0;
-      }
-
-      if (!planosComparados.has(plano.id)) {
-        planosComparados.set(plano.id, {
-          planoId: plano.id,
-          planoNome: plano.nome,
-          planoValor: plano.valor,
-          valorMensalidadePeriodo: 0,
-          valorTotal: 0,
-          jogos: [],
-        });
-      }
-
-      const planoComparado = planosComparados.get(plano.id);
-      planoComparado.jogos.push({
-        jogoId: jogo.id,
-        jogoAdversario: jogo.adversario,
-        jogoData: jogo.dataJogo,
-        setorComprado: setor,
-        valorIngresso: valorIngresso,
-      });
-
-      //console.log(`Plano:${plano.nome}. Valor ingresso:${valorIngresso}`);
-    });
+    planos.forEach((plano) =>
+      calcularValorJogo(jogo, setor, plano, planosComparados)
+    );
   });
 
   const p = [];
@@ -145,26 +101,73 @@ function comparar(body, planos, jogos) {
   return p;
 }
 
-async function obterPlanos() {
-  const command = new ScanCommand({
-    ProjectionExpression:
-      "id, centralLesteDesconto, centralOesteDesconto, golNorteDesconto, golSulDesconto, superiorDesconto, nome, valor",
-    TableName: planoTable,
+function calcularValorJogo(jogo, setor, plano, planosComparados) {
+  let valorIngresso = 0;
+  switch (setor) {
+    case "gn":
+      valorIngresso =
+        jogo.golNorteValor -
+        jogo.golNorteValor * (plano.golNorteDesconto / 100);
+      break;
+    case "gs":
+      valorIngresso =
+        jogo.golSulValor - jogo.golSulValor * (plano.golSulDesconto / 100);
+      break;
+    case "co":
+      valorIngresso =
+        jogo.centralOesteValor -
+        jogo.centralOesteValor * (plano.centralOesteDesconto / 100);
+      break;
+    case "cl":
+      valorIngresso =
+        jogo.centraLesteValor -
+        jogo.centraLesteValor * (plano.centralLesteDesconto / 100);
+      break;
+    case "sn":
+      valorIngresso =
+        jogo.superiorNorteValor -
+        jogo.superiorNorteValor * (plano.superiorDesconto / 100);
+      break;
+    case "ss":
+      valorIngresso =
+        jogo.superiorSulValor -
+        jogo.superiorSulValor * (plano.superiorDesconto / 100);
+      break;
+    case "sl":
+      valorIngresso =
+        jogo.superiorLesteValor -
+        jogo.superiorLesteValor * (plano.superiorDesconto / 100);
+      break;
+    case "so":
+      valorIngresso =
+        jogo.superiorOesteValor -
+        jogo.superiorOesteValor * (plano.superiorDesconto / 100);
+      break;
+    default:
+      valorIngresso = 0;
+  }
+
+  if (!planosComparados.has(plano.id)) {
+    planosComparados.set(plano.id, {
+      planoId: plano.id,
+      planoNome: plano.nome,
+      planoValor: plano.valor,
+      valorMensalidadePeriodo: 0,
+      valorTotal: 0,
+      jogos: [],
+    });
+  }
+
+  const planoComparado = planosComparados.get(plano.id);
+  planoComparado.jogos.push({
+    jogoId: jogo.id,
+    jogoAdversario: jogo.adversario,
+    jogoData: jogo.dataJogo,
+    setorComprado: setor,
+    valorIngresso: valorIngresso,
   });
 
-  const response = await docClient.send(command);
-  return response.Items;
-}
-
-async function obterJogos() {
-  const command = new ScanCommand({
-    ProjectionExpression:
-      "id, adversario, dataJogo, centralOesteValor, centralLesteValor, golNorteValor, golSulValor, superiorNorteValor, superiorSulValor, superiorOesteValor, superiorLesteValor",
-    TableName: jogoTable,
-  });
-
-  const response = await docClient.send(command);
-  return response.Items;
+  //console.log(`Plano:${plano.nome}. Valor ingresso:${valorIngresso}`);
 }
 
 function monthDiff(d1s, d2s) {
