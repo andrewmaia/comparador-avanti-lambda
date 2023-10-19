@@ -65,19 +65,33 @@ function comparar(body, planos, jogos) {
   });
 
   let params = body.split("&");
-  params.forEach((keyAndValue) => {
-    let keyValueArray = keyAndValue.split("=");
-    let jogoId = keyValueArray[0];
-    let setor = keyValueArray[1];
+  params.forEach((jogoSetor) => {
+    let jogoSetorArray = jogoSetor.split("=");
+    let jogoId = jogoSetorArray[0];
+    let setor = jogoSetorArray[1];
 
     //Não foi no jogo
     if (setor === "") return;
 
     let jogo = jogos.find((jogo) => jogo.id === jogoId);
 
-    planos.forEach((plano) =>
-      calcularValorJogo(jogo, setor, plano, planosComparados)
-    );
+    planos.forEach((plano) => {
+      const jogoComValorIngresso = calcularValorJogo(jogo, setor, plano);
+
+      if (!planosComparados.has(plano.id)) {
+        planosComparados.set(plano.id, {
+          planoId: plano.id,
+          planoNome: plano.nome,
+          planoValor: plano.valor,
+          valorMensalidadePeriodo: 0,
+          valorTotal: 0,
+          jogos: [],
+        });
+      }
+
+      const planoComparado = planosComparados.get(plano.id);
+      planoComparado.jogos.push(jogoComValorIngresso);
+    });
   });
 
   const p = [];
@@ -147,27 +161,13 @@ function calcularValorJogo(jogo, setor, plano, planosComparados) {
       valorIngresso = 0;
   }
 
-  if (!planosComparados.has(plano.id)) {
-    planosComparados.set(plano.id, {
-      planoId: plano.id,
-      planoNome: plano.nome,
-      planoValor: plano.valor,
-      valorMensalidadePeriodo: 0,
-      valorTotal: 0,
-      jogos: [],
-    });
-  }
-
-  const planoComparado = planosComparados.get(plano.id);
-  planoComparado.jogos.push({
+  return {
     jogoId: jogo.id,
     jogoAdversario: jogo.adversario,
     jogoData: jogo.dataJogo,
     setorComprado: setor,
     valorIngresso: valorIngresso,
-  });
-
-  //console.log(`Plano:${plano.nome}. Valor ingresso:${valorIngresso}`);
+  };
 }
 
 function monthDiff(d1s, d2s) {
