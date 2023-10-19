@@ -76,7 +76,11 @@ function comparar(body, planos, jogos) {
     let jogo = jogos.find((jogo) => jogo.id === jogoId);
 
     planos.forEach((plano) => {
-      const jogoComValorIngresso = calcularValorJogo(jogo, setor, plano);
+      const jogoComValorIngresso = calcularValorJogoPorPlano(
+        jogo,
+        setor,
+        plano
+      );
 
       if (!planosComparados.has(plano.id)) {
         planosComparados.set(plano.id, {
@@ -94,26 +98,12 @@ function comparar(body, planos, jogos) {
     });
   });
 
-  planosComparados.forEach(function (plano) {
-    plano.jogos.sort((a, b) => {
-      return new Date(a.jogoData) - new Date(b.jogoData);
-    });
-
-    const jogoMaisAntigo = plano.jogos[0];
-    const jogoMaisRecente = plano.jogos[plano.jogos.length - 1];
-
-    const meses = monthDiff(jogoMaisAntigo.jogoData, jogoMaisRecente.jogoData);
-    plano.valorMensalidadePeriodo = plano.planoValor * meses;
-    const valorJogos = plano.jogos.reduce((total, jogo) => {
-      return { valorIngresso: total.valorIngresso + jogo.valorIngresso };
-    }).valorIngresso;
-    plano.valorTotal = plano.valorMensalidadePeriodo + valorJogos;
-  });
+  planosComparados.forEach((plano) => calcularValoresTotaisPlano(plano));
 
   return Array.from(planosComparados.values());
 }
 
-function calcularValorJogo(jogo, setor, plano, planosComparados) {
+function calcularValorJogoPorPlano(jogo, setor, plano, planosComparados) {
   let valorIngresso = 0;
   switch (setor) {
     case "gn":
@@ -166,6 +156,22 @@ function calcularValorJogo(jogo, setor, plano, planosComparados) {
     setorComprado: setor,
     valorIngresso: valorIngresso,
   };
+}
+
+function calcularValoresTotaisPlano(plano) {
+  plano.jogos.sort((a, b) => {
+    return new Date(a.jogoData) - new Date(b.jogoData);
+  });
+
+  const jogoMaisAntigo = plano.jogos[0];
+  const jogoMaisRecente = plano.jogos[plano.jogos.length - 1];
+
+  const meses = monthDiff(jogoMaisAntigo.jogoData, jogoMaisRecente.jogoData);
+  plano.valorMensalidadePeriodo = plano.planoValor * meses;
+  const valorJogos = plano.jogos.reduce((total, jogo) => {
+    return { valorIngresso: total.valorIngresso + jogo.valorIngresso };
+  }).valorIngresso;
+  plano.valorTotal = plano.valorMensalidadePeriodo + valorJogos;
 }
 
 function monthDiff(d1s, d2s) {
