@@ -1,7 +1,7 @@
 /** @format */
 "use strict";
 
-import { comparar } from "../../app.mjs";
+import { comparar } from "../../comparador.mjs";
 import { expect } from "chai";
 
 describe("Lambda Comparação", function () {
