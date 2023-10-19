@@ -49,7 +49,7 @@ async function obterJogos() {
   return response.Items;
 }
 
-function comparar(body, planos, jogos) {
+export function comparar(body, planos, jogos) {
   const planosComparados = new Map();
 
   //Sem plano
@@ -87,7 +87,9 @@ function comparar(body, planos, jogos) {
           planoId: plano.id,
           planoNome: plano.nome,
           planoValor: plano.valor,
-          valorMensalidadePeriodo: 0,
+          quantidadeMesesPeriodo: 0,
+          valorMensalidadesPeriodo: 0,
+          valorTotalIngressos: 0,
           valorTotal: 0,
           jogos: [],
         });
@@ -165,21 +167,17 @@ function calcularValoresTotaisPlano(plano) {
 
   const jogoMaisAntigo = plano.jogos[0];
   const jogoMaisRecente = plano.jogos[plano.jogos.length - 1];
-
-  console.log(`Jogo mais antigo: ${jogoMaisAntigo}`);
-  console.log(`Jogo mais recente: ${jogoMaisRecente}`);
-
-  const meses = mesesParaPagar(
+  plano.quantidadeMesesPeriodo = mesesParaPagar(
     jogoMaisAntigo.jogoData,
     jogoMaisRecente.jogoData
   );
-  plano.valorMensalidadePeriodo = plano.planoValor * meses;
+  plano.valorMensalidadesPeriodo =
+    plano.planoValor * plano.quantidadeMesesPeriodo;
 
-  const valorJogos = plano.jogos.reduce((total, jogo) => {
+  plano.valorTotalIngressos = plano.jogos.reduce((total, jogo) => {
     return { valorIngresso: total.valorIngresso + jogo.valorIngresso };
   }).valorIngresso;
-
-  plano.valorTotal = plano.valorMensalidadePeriodo + valorJogos;
+  plano.valorTotal = plano.valorMensalidadesPeriodo + plano.valorTotalIngressos;
 }
 
 function mesesParaPagar(d1s, d2s) {
