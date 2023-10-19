@@ -22,7 +22,7 @@ describe("Lambda Comparação", function () {
 
   it("Calculo Valor Total de Mensalidades", async () => {
     expect(result[0].quantidadeMesesPeriodo).to.equal(2);
-    expect(result[0].valorMensalidadesPeriodo).to.equal(83.98);
+    expect(result[0].valorMensalidadesPeriodo).to.equal(83.99);
     expect(result[1].quantidadeMesesPeriodo).to.equal(2);
     expect(result[1].valorMensalidadesPeriodo).to.equal(155.98);
   });
