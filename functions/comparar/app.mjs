@@ -166,15 +166,23 @@ function calcularValoresTotaisPlano(plano) {
   const jogoMaisAntigo = plano.jogos[0];
   const jogoMaisRecente = plano.jogos[plano.jogos.length - 1];
 
-  const meses = monthDiff(jogoMaisAntigo.jogoData, jogoMaisRecente.jogoData);
+  console.log(`Jogo mais antigo: ${jogoMaisAntigo}`);
+  console.log(`Jogo mais recente: ${jogoMaisRecente}`);
+
+  const meses = mesesParaPagar(
+    jogoMaisAntigo.jogoData,
+    jogoMaisRecente.jogoData
+  );
   plano.valorMensalidadePeriodo = plano.planoValor * meses;
+
   const valorJogos = plano.jogos.reduce((total, jogo) => {
     return { valorIngresso: total.valorIngresso + jogo.valorIngresso };
   }).valorIngresso;
+
   plano.valorTotal = plano.valorMensalidadePeriodo + valorJogos;
 }
 
-function monthDiff(d1s, d2s) {
+function mesesParaPagar(d1s, d2s) {
   const d1 = new Date(d1s);
   const d2 = new Date(d2s);
 
@@ -182,5 +190,7 @@ function monthDiff(d1s, d2s) {
   months = (d2.getFullYear() - d1.getFullYear()) * 12;
   months -= d1.getMonth();
   months += d2.getMonth();
-  return months <= 0 ? 0 : months;
+  months = months <= 0 ? 0 : months;
+  months++;
+  return months;
 }
