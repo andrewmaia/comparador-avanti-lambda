@@ -20,14 +20,35 @@ Resources:
         WriteCapacityUnits: 2
 
   Jogo:
-    Type: AWS::Serverless::SimpleTable
+    Type: "AWS::DynamoDB::Table"
     Properties:
-      PrimaryKey:
-        Name: id
-        Type: String
+      AttributeDefinitions:
+        - AttributeName: "id"
+          AttributeType: "S"
+        - AttributeName: "dataJogo"
+          AttributeType: "S"
+        - AttributeName: "statusJogo"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "id"
+          KeyType: "HASH"
+        - AttributeName: "dataJogo"
+          KeyType: "RANGE"
       ProvisionedThroughput:
         ReadCapacityUnits: 2
         WriteCapacityUnits: 2
+      GlobalSecondaryIndexes:
+        - IndexName: "dataJogoIndex"
+          KeySchema:
+            - AttributeName: "statusJogo"
+              KeyType: HASH
+            - AttributeName: "dataJogo"
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 2
+            WriteCapacityUnits: 2
 
   PlanoFunction:
     Type: AWS::Serverless::Function

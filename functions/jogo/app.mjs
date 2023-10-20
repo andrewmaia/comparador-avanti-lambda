@@ -1,6 +1,6 @@
 /** @format */
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, ScanCommand } from "@aws-sdk/lib-dynamodb";
+import { DynamoDBDocumentClient, QueryCommand } from "@aws-sdk/lib-dynamodb";
 
 const client = new DynamoDBClient({});
 const docClient = DynamoDBDocumentClient.from(client);
@@ -22,10 +22,13 @@ export const lambdaHandler = async (event, context) => {
 };
 
 export async function obterJogos() {
-  const command = new ScanCommand({
-    ProjectionExpression:
-      "id, adversario, dataJogo, centralOesteValor, centralLesteValor, golNorteValor, golSulValor, superiorNorteValor, superiorSulValor, superiorOesteValor, superiorLesteValor",
+  const command = new QueryCommand({
     TableName: jogoTable,
+    IndexName: "dataJogoIndex",
+    KeyConditionExpression: "statusJogo = :statusJogo",
+    ExpressionAttributeValues: { ":statusJogo": "ok" },
+    ScanIndexForward: false,
+    Limit: 5,
   });
 
   const response = await docClient.send(command);
