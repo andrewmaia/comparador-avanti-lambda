@@ -290,6 +290,25 @@ async function carregarJogos() {
             },
           },
         },
+        ,
+        {
+          PutRequest: {
+            Item: {
+              id: "5",
+              adversario: "São Paulo",
+              dataJogo: "2023-10-25",
+              golNorteValor: 100,
+              golSulValor: 140,
+              centralLesteValor: 180,
+              centralOesteValor: 200,
+              superiorNorteValor: 110,
+              superiorSulValor: 110,
+              superiorLesteValor: 120,
+              superiorOesteValor: 120,
+              statusJogo: "ok",
+            },
+          },
+        },
       ],
     },
   });

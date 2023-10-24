@@ -10,11 +10,11 @@ const planoTable = process.env.PlanoTable;
 
 export const lambdaHandler = async (event, context) => {
   try {
-    console.log(JSON.stringify(event));
+    //console.log(JSON.stringify(event));
     let planos = await obterPlanos();
     let jogos = await obterJogos();
     const planosComparados = comparar(event.body, planos, jogos);
-    console.log(JSON.stringify(planosComparados));
+    //console.log(JSON.stringify(planosComparados));
     return {
       statusCode: 200,
       headers: {
