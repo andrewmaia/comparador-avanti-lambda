@@ -1,6 +1,6 @@
 /** @format */
 import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
-import { DynamoDBDocumentClient, ScanCommand } from "@aws-sdk/lib-dynamodb";
+import { DynamoDBDocumentClient, QueryCommand } from "@aws-sdk/lib-dynamodb";
 
 const client = new DynamoDBClient({});
 const docClient = DynamoDBDocumentClient.from(client);
@@ -22,10 +22,11 @@ export const lambdaHandler = async (event, context) => {
 };
 
 export async function obterPlanos() {
-  const command = new ScanCommand({
-    ProjectionExpression:
-      "id, nome, valor,centralLesteDesconto, centralOesteDesconto, golNorteDesconto, golSulDesconto, superiorDesconto",
+  const command = new QueryCommand({
     TableName: planoTable,
+    IndexName: "valorIndex",
+    KeyConditionExpression: "statusPlano = :statusPlano",
+    ExpressionAttributeValues: { ":statusPlano": "ok" },
   });
 
   const response = await docClient.send(command);

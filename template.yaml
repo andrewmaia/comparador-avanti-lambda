@@ -10,14 +10,35 @@ Globals:
 
 Resources:
   Plano:
-    Type: AWS::Serverless::SimpleTable
+    Type: "AWS::DynamoDB::Table"
     Properties:
-      PrimaryKey:
-        Name: id
-        Type: String
+      AttributeDefinitions:
+        - AttributeName: "id"
+          AttributeType: "S"
+        - AttributeName: "valor"
+          AttributeType: "N"
+        - AttributeName: "statusPlano"
+          AttributeType: "S"
+      KeySchema:
+        - AttributeName: "id"
+          KeyType: "HASH"
+        - AttributeName: "valor"
+          KeyType: "RANGE"
       ProvisionedThroughput:
         ReadCapacityUnits: 2
         WriteCapacityUnits: 2
+      GlobalSecondaryIndexes:
+        - IndexName: "valorIndex"
+          KeySchema:
+            - AttributeName: "statusPlano"
+              KeyType: HASH
+            - AttributeName: "valor"
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+          ProvisionedThroughput:
+            ReadCapacityUnits: 2
+            WriteCapacityUnits: 2
 
   Jogo:
     Type: "AWS::DynamoDB::Table"
