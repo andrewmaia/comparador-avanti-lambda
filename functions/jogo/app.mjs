@@ -16,7 +16,7 @@ export const lambdaHandler = async (event, context) => {
       headers: {
         "Access-Control-Allow-Origin": "*",
       },
-      body: JSON.stringify(await obterJogos(2, lastEvaluatedKey)),
+      body: JSON.stringify(await obterJogos(6, lastEvaluatedKey)),
     };
   } catch (err) {
     console.log(err);
