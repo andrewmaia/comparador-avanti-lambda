@@ -9,8 +9,7 @@ const jogoTable = process.env.JogoTable;
 export const lambdaHandler = async (event, context) => {
   try {
     let lastEvaluatedKey;
-    if (event.body !== null)
-      lastEvaluatedKey = JSON.parse(event.body).LastEvaluatedKey;
+    if (event.body !== null) lastEvaluatedKey = JSON.parse(event.body);
 
     return {
       statusCode: 200,
