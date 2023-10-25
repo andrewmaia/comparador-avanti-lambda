@@ -8,12 +8,16 @@ const jogoTable = process.env.JogoTable;
 
 export const lambdaHandler = async (event, context) => {
   try {
+    let lastEvaluatedKey;
+    if (event.body !== null)
+      lastEvaluatedKey = JSON.parse(event.body).LastEvaluatedKey;
+
     return {
       statusCode: 200,
       headers: {
         "Access-Control-Allow-Origin": "*",
       },
-      body: JSON.stringify(await obterJogos()),
+      body: JSON.stringify(await obterJogos(2, lastEvaluatedKey)),
     };
   } catch (err) {
     console.log(err);
@@ -21,16 +25,21 @@ export const lambdaHandler = async (event, context) => {
   }
 };
 
-export async function obterJogos() {
+export async function obterJogos(limit, exclusiveStartKey) {
   const command = new QueryCommand({
     TableName: jogoTable,
     IndexName: "dataJogoIndex",
     KeyConditionExpression: "statusJogo = :statusJogo",
     ExpressionAttributeValues: { ":statusJogo": "ok" },
     ScanIndexForward: false,
-    Limit: 5,
+    Limit: limit,
+    ExclusiveStartKey: exclusiveStartKey,
   });
 
   const response = await docClient.send(command);
-  return response.Items;
+
+  return {
+    Items: response.Items,
+    LastEvaluatedKey: response.LastEvaluatedKey,
+  };
 }

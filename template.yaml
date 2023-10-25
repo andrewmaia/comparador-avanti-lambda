@@ -117,7 +117,7 @@ Resources:
           Type: Api
           Properties:
             Path: /jogos
-            Method: get
+            Method: post
 
   CompararFunction:
     Type: AWS::Serverless::Function
