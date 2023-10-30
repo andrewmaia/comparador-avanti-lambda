@@ -165,7 +165,7 @@ Resources:
       MemorySize: 128
       Policies:
         - SNSPublishMessagePolicy:
-            TopicName: !Ref SugestaoProblemasTopic
+            TopicName: !GetAtt SugestaoProblemasTopic.TopicName
       Environment:
         Variables:
           SugestaoProblemasTopic: !Ref SugestaoProblemasTopic
@@ -206,30 +206,15 @@ Outputs:
   PlanoApi:
     Description: "API Gateway endpoint URL for Prod stage for Plano function"
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/planos"
-  PlanoFunction:
-    Description: "Plano Lambda Function ARN"
-    Value: !GetAtt PlanoFunction.Arn
-  PlanoFunctionIamRole:
-    Description: "Implicit IAM Role created for Plano function"
-    Value: !GetAtt PlanoFunctionRole.Arn
   JogoApi:
     Description: "API Gateway endpoint URL for Prod stage for Jogo function"
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/jogos"
-  JogoFunction:
-    Description: "Jogo Lambda Function ARN"
-    Value: !GetAtt JogoFunction.Arn
-  JogoFunctionIamRole:
-    Description: "Implicit IAM Role created for Jogo function"
-    Value: !GetAtt JogoFunctionRole.Arn
+  SugestaoApi:
+    Description: "API Gateway endpoint URL for Prod stage for Sugestao function"
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/sugestao"
   CompararApi:
     Description: "API Gateway endpoint URL for Prod stage for Comparar function"
     Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/comparar"
-  CompararFunction:
-    Description: "Comparar Lambda Function ARN"
-    Value: !GetAtt CompararFunction.Arn
-  CompararFunctionIamRole:
-    Description: "Implicit IAM Role created for Comparar function"
-    Value: !GetAtt CompararFunctionRole.Arn
   CargaInicialResponse:
     Description: Data From Lambda Carga Inicial
     Value: !GetAtt CargaInicialResource.cargaFeita
