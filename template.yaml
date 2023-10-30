@@ -146,6 +146,36 @@ Resources:
             Path: /comparar
             Method: post
 
+  SugestaoProblemasTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      Subscription:
+        - Endpoint: "andrewsmaia@gmail.com"
+          Protocol: "email"
+      TopicName: "SugestaoProblemas"
+
+  SugestaoFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: functions/sugestao/
+      Handler: app.lambdaHandler
+      Runtime: nodejs18.x
+      Architectures:
+        - x86_64
+      MemorySize: 128
+      Policies:
+        - SNSPublishMessagePolicy:
+            TopicName: !Ref SugestaoProblemasTopic
+      Environment:
+        Variables:
+          SugestaoProblemasTopic: !Ref SugestaoProblemasTopic
+      Events:
+        Sugestao:
+          Type: Api
+          Properties:
+            Path: /sugestao
+            Method: post
+
   CargaInicialFunction:
     Type: AWS::Serverless::Function
     Properties:
