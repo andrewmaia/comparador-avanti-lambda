@@ -126,25 +126,6 @@ async function carregarPlanos() {
                 { setorNome: "Superior Leste", percentualDesconto: 20 },
                 { setorNome: "Superior Oeste", percentualDesconto: 20 },
               ],
-            },
-          },
-        },
-        {
-          PutRequest: {
-            Item: {
-              id: "3",
-              nome: "Plano Especial",
-              valor: 20.99,
-              setoresDesconto: [
-                { setorNome: "Gol Norte", percentualDesconto: 50 },
-                { setorNome: "Gol Sul", percentualDesconto: 50 },
-                { setorNome: "Central Leste", percentualDesconto: 25 },
-                { setorNome: "Central Oeste", percentualDesconto: 0 },
-                { setorNome: "Superior Norte", percentualDesconto: 50 },
-                { setorNome: "Superior Sul", percentualDesconto: 50 },
-                { setorNome: "Superior Leste", percentualDesconto: 50 },
-                { setorNome: "Superior Oeste", percentualDesconto: 50 },
-              ],
               statusPlano: "ok",
             },
           },
@@ -245,6 +226,7 @@ async function carregarPlanos() {
                 { setorNome: "Superior Leste", percentualDesconto: 100 },
                 { setorNome: "Superior Oeste", percentualDesconto: 100 },
               ],
+              statusPlano: "ok",
             },
           },
         },
@@ -270,7 +252,7 @@ async function carregarJogos() {
               id: "1",
               adversario: "Atlético Mineiro",
               dataJogo: "2023-10-19",
-              AllianzParque: true,
+              allianzParque: true,
               setores: [
                 {
                   setorNome: "Gol Norte",
@@ -316,7 +298,7 @@ async function carregarJogos() {
               id: "2",
               adversario: "Boca Juniors",
               dataJogo: "2023-10-05",
-              AllianzParque: true,
+              allianzParque: true,
               setores: [
                 {
                   setorNome: "Gol Norte",
@@ -361,7 +343,7 @@ async function carregarJogos() {
               id: "3",
               adversario: "Goias",
               dataJogo: "2023-09-15",
-              AllianzParque: true,
+              allianzParque: true,
               setores: [
                 {
                   setorNome: "Gol Norte",
@@ -406,7 +388,7 @@ async function carregarJogos() {
               id: "4",
               adversario: "Vasco",
               dataJogo: "2023-08-27",
-              AllianzParque: true,
+              allianzParque: true,
               setores: [
                 {
                   setorNome: "Gol Norte",
@@ -451,7 +433,7 @@ async function carregarJogos() {
               id: "5",
               adversario: "São Paulo",
               dataJogo: "2023-10-25",
-              AllianzParque: true,
+              allianzParque: true,
               setores: [
                 {
                   setorNome: "Gol Norte",
@@ -496,7 +478,7 @@ async function carregarJogos() {
               id: "6",
               adversario: "Bahia",
               dataJogo: "2023-10-28",
-              AllianzParque: true,
+              allianzParque: true,
               setores: [
                 {
                   setorNome: "Gol Norte",
@@ -541,7 +523,7 @@ async function carregarJogos() {
               id: "7",
               adversario: "Atlético Paranaense",
               dataJogo: "2023-11-04",
-              AllianzParque: false,
+              allianzParque: false,
               nomeEstadio: "Arena Barueri",
               setores: [
                 {
@@ -615,7 +597,7 @@ async function carregarJogos() {
               id: "8",
               adversario: "Internacional",
               dataJogo: "2023-11-11",
-              AllianzParque: false,
+              allianzParque: false,
               nomeEstadio: "Arena Barueri",
               setores: [
                 {

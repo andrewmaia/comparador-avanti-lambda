@@ -30,7 +30,6 @@ export function comparar(body, planos, jogos) {
     if (setorNome === "") return;
 
     let jogo = jogos.find((jogo) => jogo.id === jogoId);
-
     planos.forEach((plano) => {
       const jogoComValorIngresso = calcularValorJogoPorPlano(
         jogo,
@@ -64,7 +63,7 @@ export function comparar(body, planos, jogos) {
 function calcularValorJogoPorPlano(jogo, setorNome, plano) {
   let valorIngresso = 0;
   const setor = jogo.setores.find((setor) => setor.setorNome === setorNome);
-  if (jogo.AllianzParque) {
+  if (jogo.allianzParque) {
     const setorDesconto = plano.setoresDesconto.find(
       (setorDesconto) => setorDesconto.setorNome === setorNome
     );

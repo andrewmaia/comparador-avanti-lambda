@@ -83,7 +83,7 @@ function mockJogos() {
       id: "1",
       adversario: "Atlético Mineiro",
       dataJogo: "2023-10-19",
-      AllianzParque: true,
+      allianzParque: true,
       setores: [
         {
           setorNome: "Gol Norte",
@@ -124,7 +124,7 @@ function mockJogos() {
       id: "8",
       adversario: "Internacional",
       dataJogo: "2023-11-11",
-      AllianzParque: false,
+      allianzParque: false,
       nomeEstadio: "Arena Barueri",
       setores: [
         {

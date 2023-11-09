@@ -10,11 +10,10 @@ const planoTable = process.env.PlanoTable;
 
 export const lambdaHandler = async (event, context) => {
   try {
-    //console.log(JSON.stringify(event));
     let planos = await obterPlanos();
     let jogos = await obterJogos();
     const planosComparados = comparar(event.body, planos, jogos);
-    //console.log(JSON.stringify(planosComparados));
+
     return {
       statusCode: 200,
       headers: {
@@ -31,8 +30,7 @@ export const lambdaHandler = async (event, context) => {
 
 async function obterPlanos() {
   const command = new ScanCommand({
-    ProjectionExpression:
-      "id, centralLesteDesconto, centralOesteDesconto, golNorteDesconto, golSulDesconto, superiorDesconto, nome, valor",
+    ProjectionExpression: "id, nome, valor, setoresDesconto",
     TableName: planoTable,
   });
 
@@ -43,7 +41,7 @@ async function obterPlanos() {
 async function obterJogos() {
   const command = new ScanCommand({
     ProjectionExpression:
-      "id, adversario, dataJogo, centralOesteValor, centralLesteValor, golNorteValor, golSulValor, superiorNorteValor, superiorSulValor, superiorOesteValor, superiorLesteValor",
+      "id, adversario, dataJogo, allianzParque,nomeEstadio, setores",
     TableName: jogoTable,
   });
 
