@@ -36,7 +36,7 @@ describe("Lambda Comparação", function () {
 
   it("Valor Total Plano", async () => {
     expect(planosComparados[0].valorTotal.toFixed(2)).to.equal("173.98");
-    expect(planosComparados[1].valorTotal.toFixed(2)).to.equal("275,98");
+    expect(planosComparados[1].valorTotal.toFixed(2)).to.equal("245.98");
   });
 });
 

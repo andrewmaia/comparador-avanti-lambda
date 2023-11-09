@@ -8,11 +8,16 @@ export function comparar(body, planos, jogos) {
     id: "0",
     nome: "Sem Plano",
     valor: 0,
-    golNorteDesconto: 0,
-    golSulDesconto: 0,
-    centralLesteDesconto: 0,
-    centralOesteDesconto: 0,
-    superiorDesconto: 0,
+    setoresDesconto: [
+      { setorNome: "Gol Norte", percentualDesconto: 0 },
+      { setorNome: "Gol Sul", percentualDesconto: 0 },
+      { setorNome: "Central Leste", percentualDesconto: 0 },
+      { setorNome: "Central Oeste", percentualDesconto: 0 },
+      { setorNome: "Superior Norte", percentualDesconto: 0 },
+      { setorNome: "Superior Sul", percentualDesconto: 0 },
+      { setorNome: "Superior Leste", percentualDesconto: 0 },
+      { setorNome: "Superior Oeste", percentualDesconto: 0 },
+    ],
   });
 
   let params = body.split("&");
