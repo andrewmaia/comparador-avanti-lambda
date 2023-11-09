@@ -250,7 +250,7 @@ async function carregarJogos() {
           PutRequest: {
             Item: {
               id: "1",
-              adversario: "Atlético Mineiro",
+              adversario: "Atl. Mineiro",
               dataJogo: "2023-10-19",
               allianzParque: true,
               setores: [
@@ -521,7 +521,7 @@ async function carregarJogos() {
           PutRequest: {
             Item: {
               id: "7",
-              adversario: "Atlético Paranaense",
+              adversario: "Atl. Paranaense",
               dataJogo: "2023-11-04",
               allianzParque: false,
               nomeEstadio: "Arena Barueri",
