@@ -19,17 +19,17 @@ export function comparar(body, planos, jogos) {
   params.forEach((jogoSetor) => {
     let jogoSetorArray = jogoSetor.split("=");
     let jogoId = jogoSetorArray[0];
-    let setor = jogoSetorArray[1];
+    let setorNome = jogoSetorArray[1];
 
     //Não foi no jogo
-    if (setor === "") return;
+    if (setorNome === "") return;
 
     let jogo = jogos.find((jogo) => jogo.id === jogoId);
 
     planos.forEach((plano) => {
       const jogoComValorIngresso = calcularValorJogoPorPlano(
         jogo,
-        setor,
+        setorNome,
         plano
       );
 
@@ -56,57 +56,26 @@ export function comparar(body, planos, jogos) {
   return Array.from(planosComparados.values());
 }
 
-function calcularValorJogoPorPlano(jogo, setor, plano) {
+function calcularValorJogoPorPlano(jogo, setorNome, plano) {
   let valorIngresso = 0;
-  switch (setor) {
-    case "gn":
-      valorIngresso =
-        jogo.golNorteValor -
-        jogo.golNorteValor * (plano.golNorteDesconto / 100);
-      break;
-    case "gs":
-      valorIngresso =
-        jogo.golSulValor - jogo.golSulValor * (plano.golSulDesconto / 100);
-      break;
-    case "co":
-      valorIngresso =
-        jogo.centralOesteValor -
-        jogo.centralOesteValor * (plano.centralOesteDesconto / 100);
-      break;
-    case "cl":
-      valorIngresso =
-        jogo.centraLesteValor -
-        jogo.centraLesteValor * (plano.centralLesteDesconto / 100);
-      break;
-    case "sn":
-      valorIngresso =
-        jogo.superiorNorteValor -
-        jogo.superiorNorteValor * (plano.superiorDesconto / 100);
-      break;
-    case "ss":
-      valorIngresso =
-        jogo.superiorSulValor -
-        jogo.superiorSulValor * (plano.superiorDesconto / 100);
-      break;
-    case "sl":
-      valorIngresso =
-        jogo.superiorLesteValor -
-        jogo.superiorLesteValor * (plano.superiorDesconto / 100);
-      break;
-    case "so":
-      valorIngresso =
-        jogo.superiorOesteValor -
-        jogo.superiorOesteValor * (plano.superiorDesconto / 100);
-      break;
-    default:
-      valorIngresso = 0;
+  const setor = jogo.setores.find((setor) => setor.setorNome === setorNome);
+  if (jogo.AllianzParque) {
+    const setorDesconto = plano.setoresDesconto.find(
+      (setorDesconto) => setorDesconto.setorNome === setorNome
+    );
+    valorIngresso =
+      setor.valorIngresso -
+      setor.valorIngresso * (setorDesconto.percentualDesconto / 100);
+  } else {
+    valorIngresso = setor[plano.nome];
+    if (valorIngresso === undefined) valorIngresso = setor.valorIngresso;
   }
 
   return {
     jogoId: jogo.id,
     jogoAdversario: jogo.adversario,
     jogoData: jogo.dataJogo,
-    setorComprado: setor,
+    setorComprado: setorNome,
     valorIngresso: valorIngresso,
   };
 }
