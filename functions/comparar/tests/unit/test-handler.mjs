@@ -5,7 +5,7 @@ import { comparar } from "../../comparador.mjs";
 import { expect } from "chai";
 
 describe("Lambda Comparação", function () {
-  const event = { body: "1=Gol Norte&8=Setor D1" },
+  const event = { body: "1=Gol Norte&6=Superior Leste&8=Setor D1" },
     planos = mockPlanos(),
     jogos = mockJogos();
 
@@ -16,8 +16,8 @@ describe("Lambda Comparação", function () {
   });
 
   it("Quantidade de Jogos", async () => {
-    expect(planosComparados[0].jogos.length).to.equal(2);
-    expect(planosComparados[1].jogos.length).to.equal(2);
+    expect(planosComparados[0].jogos.length).to.equal(3);
+    expect(planosComparados[1].jogos.length).to.equal(3);
   });
 
   it("Calculo Valor Total de Mensalidades", async () => {
@@ -29,14 +29,16 @@ describe("Lambda Comparação", function () {
 
   it("Valor Ingressos", async () => {
     expect(planosComparados[0].jogos[0].valorIngresso).to.equal(50);
-    expect(planosComparados[0].jogos[1].valorIngresso).to.equal(40);
+    expect(planosComparados[0].jogos[1].valorIngresso).to.equal(60);
+    expect(planosComparados[0].jogos[2].valorIngresso).to.equal(40);
     expect(planosComparados[1].jogos[0].valorIngresso).to.equal(50);
-    expect(planosComparados[1].jogos[1].valorIngresso).to.equal(40);
+    expect(planosComparados[1].jogos[1].valorIngresso).to.equal(30);
+    expect(planosComparados[1].jogos[2].valorIngresso).to.equal(40);
   });
 
   it("Valor Total Plano", async () => {
-    expect(planosComparados[0].valorTotal.toFixed(2)).to.equal("173.98");
-    expect(planosComparados[1].valorTotal.toFixed(2)).to.equal("245.98");
+    expect(planosComparados[0].valorTotal.toFixed(2)).to.equal("233.98");
+    expect(planosComparados[1].valorTotal.toFixed(2)).to.equal("275.98");
   });
 });
 
@@ -132,6 +134,48 @@ function mockJogos() {
       ],
       statusJogo: "ok",
     },
+    {
+      id: "6",
+      adversario: "Bahia",
+      dataJogo: "2023-10-28",
+      allianzParque: true,
+      setores: [
+        {
+          setorNome: "Gol Norte",
+          valorIngresso: 100,
+        },
+        {
+          setorNome: "Gol Sul",
+          valorIngresso: 140,
+        },
+        {
+          setorNome: "Central Leste",
+          valorIngresso: 180,
+        },
+        {
+          setorNome: "Central Oeste",
+          valorIngresso: 200,
+        },
+        {
+          setorNome: "Superior Norte",
+          valorIngresso: 110,
+        },
+        {
+          setorNome: "Superior Sul",
+          valorIngresso: 110,
+        },
+        {
+          setorNome: "Superior Leste",
+          valorIngresso: 120,
+        },
+        {
+          setorNome: "Superior Oeste",
+          valorIngresso: 120,
+        },
+      ],
+      statusJogo: "ok",
+    },
+
     {
       id: "8",
       adversario: "Internacional",
