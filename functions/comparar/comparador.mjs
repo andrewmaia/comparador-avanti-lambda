@@ -64,9 +64,14 @@ function calcularValorJogoPorPlano(jogo, setorNome, plano) {
   let valorIngresso = 0;
   const setor = jogo.setores.find((setor) => setor.setorNome === setorNome);
   if (jogo.allianzParque) {
-    const setorDesconto = plano.setoresDesconto.find(
-      (setorDesconto) => setorDesconto.setorNome === setorNome
-    );
+    let setorDesconto = plano.setoresDesconto.find((setorDesconto) => {
+      if (setorDesconto.setorNome === setorNome) return true;
+      if (setorDesconto.subSetores !== undefined) {
+        return setorDesconto.subSetores.includes(setorNome);
+      }
+      return false;
+    });
+
     valorIngresso =
       setor.valorIngresso -
       setor.valorIngresso * (setorDesconto.percentualDesconto / 100);
