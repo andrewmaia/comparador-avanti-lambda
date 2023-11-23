@@ -97,10 +97,12 @@ function calcularValoresTotaisPlano(plano) {
   const jogoMaisAntigo = plano.jogos[0];
   const jogoMaisRecente = plano.jogos[plano.jogos.length - 1];
 
-  plano.quantidadeMesesPeriodo = mesesParaPagar(
-    jogoMaisAntigo.jogoData,
-    jogoMaisRecente.jogoData
-  );
+  if (plano.planoNome !== "Sem Plano") {
+    plano.quantidadeMesesPeriodo = mesesParaPagar(
+      jogoMaisAntigo.jogoData,
+      jogoMaisRecente.jogoData
+    );
+  }
   plano.valorMensalidadesPeriodo =
     plano.planoValor * plano.quantidadeMesesPeriodo;
 
