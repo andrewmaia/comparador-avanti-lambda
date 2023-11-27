@@ -259,7 +259,7 @@ async function carregarPlanos() {
                 { setorNome: "Central Oeste", percentualDesconto: 100 },
                 {
                   setorNome: "Superior",
-                  percentualDesconto: 20,
+                  percentualDesconto: 100,
                   subSetores: [
                     "Superior Norte",
                     "Superior Sul",
