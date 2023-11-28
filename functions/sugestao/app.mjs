@@ -17,7 +17,8 @@ export const lambdaHandler = async (event) => {
     return {
       statusCode: 200,
       headers: {
-        "Access-Control-Allow-Origin": "*",
+        //"Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Origin": "https://www.comparadoravanti.com.br",
         "content-type": "application/json",
       },
       body: JSON.stringify(response),
