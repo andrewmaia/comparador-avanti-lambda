@@ -40,6 +40,75 @@ describe("Lambda Comparação", function () {
     expect(planosComparados[0].valorTotal.toFixed(2)).to.equal("233.98");
     expect(planosComparados[1].valorTotal.toFixed(2)).to.equal("275.98");
   });
+
+  it("Inclui plano Sem Plano automaticamente", async () => {
+    const semPlano = planosComparados.find((plano) => plano.planoId === "0");
+
+    expect(semPlano).to.not.equal(undefined);
+    expect(semPlano.planoNome).to.equal("Sem Plano");
+    expect(semPlano.quantidadeMesesPeriodo).to.equal(0);
+  });
+});
+
+describe("Lambda Comparação - cenários adicionais", function () {
+  it("Ignora jogo sem setor selecionado", async () => {
+    const planosComparados = comparar(
+      "1=Gol Norte&6=&8=Setor D1",
+      mockPlanos(),
+      mockJogos()
+    );
+
+    const planoPrata = planosComparados.find((plano) => plano.planoId === "4");
+    const semPlano = planosComparados.find((plano) => plano.planoId === "0");
+
+    expect(planoPrata.jogos.length).to.equal(2);
+    expect(semPlano.jogos.length).to.equal(2);
+  });
+
+  it("Usa valor cheio em estádio fora do Allianz quando o plano não está mapeado", async () => {
+    const planos = [
+      {
+        id: "10",
+        nome: "Plano Visitante",
+        valor: 60,
+        setoresDesconto: [],
+        statusPlano: "ok",
+      },
+    ];
+
+    const planosComparados = comparar("8=Setor D1", planos, mockJogos());
+    const planoVisitante = planosComparados.find(
+      (plano) => plano.planoId === "10"
+    );
+
+    expect(planoVisitante.jogos[0].valorIngresso).to.equal(80);
+  });
+
+  it("Ordena jogos por data antes de calcular os totais", async () => {
+    const planosComparados = comparar(
+      "8=Setor D1&1=Gol Norte&6=Superior Leste",
+      mockPlanos(),
+      mockJogos()
+    );
+
+    const planoPrata = planosComparados.find((plano) => plano.planoId === "4");
+    expect(planoPrata.jogos.map((jogo) => jogo.jogoId)).to.deep.equal([
+      "1",
+      "6",
+      "8",
+    ]);
+    expect(planoPrata.quantidadeMesesPeriodo).to.equal(2);
+  });
+
+  it("Calcula apenas o mês corrente quando existe um único jogo", async () => {
+    const planosComparados = comparar("1=Gol Norte", mockPlanos(), mockJogos());
+    const planoPrata = planosComparados.find((plano) => plano.planoId === "4");
+    const semPlano = planosComparados.find((plano) => plano.planoId === "0");
+
+    expect(planoPrata.quantidadeMesesPeriodo).to.equal(1);
+    expect(planoPrata.valorMensalidadesPeriodo).to.equal(41.99);
+    expect(semPlano.quantidadeMesesPeriodo).to.equal(0);
+  });
 });
 
 function mockPlanos() {
